@@ -6,4 +6,51 @@
     <string name="reminder_channel_description">Erinnert dich an deinen Check-in</string>
     <string name="reminder_notification_title">Zeit für deinen Check-in</string>
     <string name="reminder_notification_text">Wie geht es dir gerade?</string>
+
+    <!-- Check-in flow -->
+    <string name="checkin_title_body">Körper</string>
+    <string name="checkin_title_emotion">Gefühl</string>
+    <string name="checkin_step_1_of_2">Schritt 1 von 2</string>
+    <string name="checkin_step_2_of_2">Schritt 2 von 2</string>
+    <string name="checkin_body_headline">Wie geht es dir körperlich?</string>
+    <string name="checkin_body_subline">Ein Tippen pro Wert.</string>
+    <string name="checkin_next">Weiter</string>
+    <string name="checkin_save">Speichern</string>
+    <string name="checkin_saved">Gespeichert ✓</string>
+    <string name="cd_checkin_close">Abbrechen</string>
+    <string name="cd_checkin_back">Zurück</string>
+
+    <!-- Body scales -->
+    <string name="scale_energy">Energie</string>
+    <string name="scale_energy_low">niedrig</string>
+    <string name="scale_energy_high">hoch</string>
+    <string name="scale_fatigue">Müdigkeit</string>
+    <string name="scale_fatigue_low">wach</string>
+    <string name="scale_fatigue_high">erschöpft</string>
+    <string name="scale_hunger">Hunger</string>
+    <string name="scale_hunger_low">hungrig</string>
+    <string name="scale_hunger_high">satt</string>
+    <string name="scale_tension">Anspannung</string>
+    <string name="scale_tension_low">entspannt</string>
+    <string name="scale_tension_high">angespannt</string>
+    <string name="cd_scale_value">%1$s: Wert %2$d von 5</string>
+
+    <!-- Emotion wheel -->
+    <string name="wheel_hint_category">Tippe eine Kategorie.</string>
+    <string name="wheel_hint_leaf">Wähle die Emotion im äußeren Ring.</string>
+    <string name="wheel_hub_core">6 Kerngefühle</string>
+    <string name="wheel_hub_back">‹ zurück</string>
+    <string name="cd_emotion_wheel">Gefühlsrad</string>
+    <string name="readout_category">Kategorie</string>
+    <string name="readout_level2">Ebene 2</string>
+    <string name="readout_level3">Ebene 3</string>
+    <string name="readout_empty">–</string>
+    <string name="note_add">Notiz hinzufügen (optional)</string>
+    <string name="note_placeholder">Was beschäftigt dich gerade?</string>
+
+    <!-- Discard dialog -->
+    <string name="discard_title">Check-in verwerfen?</string>
+    <string name="discard_message">Du hast bereits etwas eingegeben. Wenn du jetzt gehst, wird dieser Check-in nicht gespeichert.</string>
+    <string name="discard_keep">Behalten</string>
+    <string name="discard_discard">Verwerfen</string>
 </resources>

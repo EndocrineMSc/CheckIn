@@ -17,6 +17,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.endocrine.checkin.presentation.checkin.CheckinRoot
 
 /**
  * The app's single navigation host. Destinations are placeholders for now — Steps 6–8 replace
@@ -51,15 +52,12 @@ fun CheckinNavHost(
 
         composable<Checkin> { backStackEntry ->
             val route: Checkin = backStackEntry.toRoute()
-            // Post-save contract (Step 6 invokes onCheckinComplete): notification-launched check-ins
-            // finish the activity; manually-opened ones pop back to History.
-            val onCheckinComplete: () -> Unit = {
+            // Post-save / exit contract: notification-launched check-ins finish the activity;
+            // manually-opened ones pop back to History.
+            val onComplete: () -> Unit = {
                 if (route.fromNotification) onFinishActivity() else navController.popToHistory()
             }
-            PlaceholderScreen(
-                title = if (route.fromNotification) "Check-in (via Benachrichtigung)" else "Check-in",
-                actions = listOf("Speichern" to onCheckinComplete),
-            )
+            CheckinRoot(onComplete = onComplete)
         }
 
         composable<Detail> { backStackEntry ->
