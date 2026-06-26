@@ -2,6 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Post reminder notifications (runtime-requested on Android 13+, see Step 8). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Re-arm alarms after a reboot (alarms do not survive it). -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- Battery-optimization exemption prompt (sideloaded private app; see BatteryOptimization). -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <!-- NOTE: intentionally NO SCHEDULE_EXACT_ALARM / USE_EXACT_ALARM — inexact alarms by decision. -->
+
     <application
         android:name=".CheckInApplication"
         android:allowBackup="true"
@@ -24,6 +32,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Fires when a reminder alarm goes off: posts the notification + re-arms tomorrow. -->
+        <receiver
+            android:name=".notification.AlarmReceiver"
+            android:exported="false" />
+
+        <!-- Re-arms all reminders after reboot / app update / clock or timezone change. -->
+        <receiver
+            android:name=".notification.BootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

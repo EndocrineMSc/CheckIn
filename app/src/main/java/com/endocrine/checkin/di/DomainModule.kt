@@ -5,6 +5,7 @@ import com.endocrine.checkin.domain.usecase.DeleteReminderUseCase
 import com.endocrine.checkin.domain.usecase.GetCheckinUseCase
 import com.endocrine.checkin.domain.usecase.ObserveHistoryUseCase
 import com.endocrine.checkin.domain.usecase.ObserveRemindersUseCase
+import com.endocrine.checkin.domain.usecase.RescheduleRemindersUseCase
 import com.endocrine.checkin.domain.usecase.SaveCheckinUseCase
 import com.endocrine.checkin.domain.usecase.SetReminderEnabledUseCase
 import com.endocrine.checkin.domain.usecase.UpsertReminderUseCase
@@ -25,4 +26,5 @@ val domainModule: Module = module {
     factoryOf(::UpsertReminderUseCase)
     factoryOf(::DeleteReminderUseCase)
     factoryOf(::SetReminderEnabledUseCase)
+    factoryOf(::RescheduleRemindersUseCase)
 }

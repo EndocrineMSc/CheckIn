@@ -1,12 +1,15 @@
 package com.endocrine.checkin.di
 
 import androidx.room.Room
+import com.endocrine.checkin.data.alarm.AlarmScheduler
 import com.endocrine.checkin.data.local.CheckinDatabase
 import com.endocrine.checkin.data.repository.DataStoreReminderRepository
 import com.endocrine.checkin.data.repository.RoomCheckinRepository
 import com.endocrine.checkin.data.settings.ReminderPreferences
 import com.endocrine.checkin.domain.repository.CheckinRepository
 import com.endocrine.checkin.domain.repository.ReminderRepository
+import com.endocrine.checkin.domain.scheduler.ReminderScheduler
+import com.endocrine.checkin.notification.NotificationPublisher
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
@@ -24,6 +27,10 @@ val dataModule: Module = module {
     }
     single { get<CheckinDatabase>().checkinDao() }
     single { ReminderPreferences(androidContext()) }
+
+    // Notifications & alarm scheduling.
+    single { NotificationPublisher(androidContext()) }
+    single { AlarmScheduler(androidContext()) } bind ReminderScheduler::class
 
     // Repositories (bound to their domain interfaces).
     singleOf(::RoomCheckinRepository) bind CheckinRepository::class
