@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design-Dokument – Check-in Tracking App (MVP)</title>
+<style>
+  :root {
+    --bg: #f5f6f8;
+    --card: #ffffff;
+    --ink: #1f2430;
+    --muted: #5c6675;
+    --line: #e3e7ee;
+    --accent: #4f46e5;
+    --accent-soft: #eef0fe;
+    --green: #1f9d63;
+    --amber: #b97e0a;
+    --red: #c0392b;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 16px;
+  }
+  .wrap { max-width: 940px; margin: 0 auto; padding: 40px 24px 80px; }
+  header.doc {
+    background: linear-gradient(135deg, #4f46e5 0%, #6d5dfb 100%);
+    color: #fff;
+    border-radius: var(--radius);
+    padding: 36px 32px;
+    margin-bottom: 32px;
+    box-shadow: 0 6px 24px rgba(79,70,229,.25);
+  }
+  header.doc h1 { margin: 0 0 6px; font-size: 28px; letter-spacing: -.3px; }
+  header.doc .sub { font-size: 15px; opacity: .92; }
+  header.doc .meta { margin-top: 16px; font-size: 13px; opacity: .85; display: flex; flex-wrap: wrap; gap: 18px; }
+  header.doc .meta b { font-weight: 600; }
+
+  section.card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 26px 30px;
+    margin-bottom: 22px;
+    box-shadow: 0 1px 3px rgba(20,30,50,.04);
+  }
+  h2 {
+    font-size: 20px;
+    margin: 0 0 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--accent-soft);
+    display: flex; align-items: center; gap: 10px;
+  }
+  h2 .num {
+    background: var(--accent);
+    color: #fff;
+    width: 28px; height: 28px;
+    border-radius: 7px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700;
+    flex: 0 0 auto;
+  }
+  h3 { font-size: 16px; margin: 22px 0 8px; color: var(--ink); }
+  p { margin: 8px 0; }
+  ul { margin: 8px 0; padding-left: 22px; }
+  li { margin: 4px 0; }
+  .muted { color: var(--muted); }
+  code {
+    background: #f0f2f7;
+    padding: 2px 6px;
+    border-radius: 5px;
+    font-size: 13.5px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+  }
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .4px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    text-transform: uppercase;
+  }
+  .tag.must { background: #fde8e6; color: var(--red); }
+  .tag.should { background: #fff2d6; color: var(--amber); }
+  .tag.nice { background: #e6f5ec; color: var(--green); }
+  .tag.out { background: #ecedf1; color: var(--muted); }
+
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 14.5px; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); }
+  th { background: var(--accent-soft); color: var(--accent); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .3px; }
+  tr:last-child td { border-bottom: none; }
+
+  .pill-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0 14px; }
+  .pill { background: var(--accent-soft); color: var(--accent); border-radius: 8px; padding: 6px 14px; font-weight: 600; font-size: 14px; }
+
+  .flow { counter-reset: step; margin: 14px 0; }
+  .flow .step {
+    position: relative;
+    padding: 10px 0 10px 46px;
+    border-left: 2px solid var(--accent-soft);
+    margin-left: 14px;
+  }
+  .flow .step::before {
+    counter-increment: step;
+    content: counter(step);
+    position: absolute; left: -15px; top: 8px;
+    width: 28px; height: 28px;
+    background: var(--accent); color: #fff;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+  }
+  .flow .step:last-child { border-left-color: transparent; }
+  .flow .step b { display: block; }
+
+  .scale { display: inline-flex; gap: 6px; margin-left: 4px; vertical-align: middle; }
+  .scale span {
+    width: 30px; height: 30px;
+    border: 1.5px solid var(--accent);
+    border-radius: 7px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-weight: 600; color: var(--accent); font-size: 14px;
+  }
+
+  .wheel { display: grid; grid-template-columns: 1fr; gap: 14px; margin-top: 10px; }
+  .emotion-group { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .emotion-group summary {
+    cursor: pointer;
+    padding: 12px 16px;
+    font-weight: 700;
+    font-size: 15px;
+    background: #fafbfd;
+    list-style: none;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .emotion-group summary::-webkit-details-marker { display: none; }
+  .emotion-group summary::after { content: "▸"; color: var(--muted); transition: transform .15s; }
+  .emotion-group[open] summary::after { transform: rotate(90deg); }
+  .emotion-group .body { padding: 6px 16px 16px; }
+  .lvl { margin: 10px 0; }
+  .lvl .lbl { font-size: 12px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); font-weight: 700; margin-bottom: 4px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { background: var(--accent-soft); color: var(--accent); border-radius: 16px; padding: 3px 11px; font-size: 13px; }
+  .chip.cat { background: var(--accent); color: #fff; }
+
+  .data-fields { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); gap: 8px; margin-top: 10px; }
+  .field { background: #fafbfd; border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: 13.5px; }
+  .field b { display: block; font-family: "SF Mono", Menlo, monospace; font-size: 12.5px; }
+  .field span { color: var(--muted); font-size: 12px; }
+
+  .note {
+    background: #fffbe9;
+    border-left: 4px solid var(--amber);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+  .note.rule { background: var(--accent-soft); border-left-color: var(--accent); }
+
+  ol.q { counter-reset: q; list-style: none; padding-left: 0; }
+  ol.q > li {
+    background: #fafbfd;
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--accent);
+    border-radius: 8px;
+    padding: 14px 18px 14px 50px;
+    margin: 10px 0;
+    position: relative;
+  }
+  ol.q > li::before {
+    counter-increment: q;
+    content: "?" counter(q);
+    position: absolute; left: 14px; top: 14px;
+    color: var(--accent); font-weight: 700; font-size: 14px;
+  }
+  ol.q b { display: block; margin-bottom: 2px; }
+  ol.q .why { color: var(--muted); font-size: 14px; }
+
+  footer.doc { text-align: center; color: var(--muted); font-size: 13px; margin-top: 30px; }
+
+  @media print {
+    body { background: #fff; }
+    .emotion-group { break-inside: avoid; }
+    section.card { box-shadow: none; break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="doc">
+  <h1>Check-in Tracking App – Design-Dokument (MVP)</h1>
+  <div class="sub">Lokale Android-App zur strukturierten Erfassung von Körperzustand und Gefühlslage über Notification-getriebene Check-ins.</div>
+  <div class="meta">
+    <span><b>Plattform:</b> Android · Offline-first</span>
+    <span><b>Zielgruppe:</b> Ein einzelner privater Nutzer</span>
+    <span><b>Status:</b> MVP-Spezifikation</span>
+  </div>
+</header>
+
+<!-- 1 -->
+<section class="card">
+  <h2><span class="num">1</span> Überblick &amp; Grundprinzip</h2>
+  <p>Die App ist <b>kein</b> klassischer Habit-Tracker und <b>kein</b> Tagebuch, sondern ein
+  <b>notification-getriebenes persönliches Check-in-System mit strukturierter Datenerfassung</b>.</p>
+  <p>Zu definierten Zeitpunkten erinnert eine lokale Notification an einen kurzen Check-in.
+  Beim Antippen startet unmittelbar die Dateneingabe. Jeder abgeschlossene Check-in erzeugt
+  <b>genau einen vollständigen Datensatz</b>. Ziel ist eine schnelle, intuitive und regelmäßige
+  Selbstbeobachtung mit späterer Exportmöglichkeit der Rohdaten.</p>
+
+  <h3>Eckpfeiler</h3>
+  <ul>
+    <li>Offline-first, rein lokale Speicherung</li>
+    <li>Keine Cloud, keine Benutzerkonten, keine Synchronisation</li>
+    <li>Schnelle Eingabe in wenigen Sekunden („ein Tap pro Wert")</li>
+    <li>CSV-Export der Rohdaten für eigene Auswertungen</li>
+  </ul>
+</section>
+
+<!-- 2 -->
+<section class="card">
+  <h2><span class="num">2</span> Notifications</h2>
+  <p>Der Nutzer kann <b>beliebig viele Erinnerungszeiten</b> definieren (z.&nbsp;B. 09:00, 14:00, 20:30).
+  Zu jeder Zeit wird eine lokale Notification erzeugt.</p>
+  <div class="note">Beispieltext: <i>„Zeit für deinen Check-in"</i></div>
+  <div class="note rule"><b>Speicherung der Erinnerungszeiten:</b> Die eingestellten Zeiten sind reine
+  App-Einstellungen, keine Check-in-Daten. Sie werden daher getrennt von der Datenbank über
+  <b>DataStore</b> abgelegt – so bleibt die Datenbank ausschließlich auf die erfassten Check-ins fokussiert.</div>
+
+  <h3>Verhalten beim Antippen <span class="tag must">Muss</span></h3>
+  <p>Direkter Einstieg in den Check-in-Prozess – <b>keine</b> Startseite, <b>keine</b> Navigation, <b>keine</b> Historie.</p>
+
+  <h3>Ignorierte Notifications</h3>
+  <ul>
+    <li>Keine Wiederholung</li>
+    <li>Keine Eskalation</li>
+    <li>Keine Erinnerungskette</li>
+  </ul>
+  <p class="muted">Die nächste geplante Notification erfolgt regulär zum nächsten Zeitpunkt.</p>
+
+  <h3>Technische Umsetzung <span class="tag must">Entschieden: inexakt (~15&nbsp;min)</span></h3>
+  <p>Geplante Auslösung über <code>AlarmManager.setAndAllowWhileIdle()</code> – Doze-fest, feuert spätestens im
+  nächsten Wartungsfenster. Typische Abweichung wenige Minuten, Worst&nbsp;case ~15&nbsp;min.</p>
+  <div class="note rule"><b>Entscheidung (von Hans bestätigt):</b> Eine Abweichung von bis zu ~15&nbsp;min ist
+  <b>akzeptabel</b> – nur eine Ungenauigkeit von ~1&nbsp;h wäre zu grob. Daher reichen <b>inexakte, Doze-feste
+  Alarme</b>; auf exakte Alarme (und die damit verbundene Sonderberechtigung) wird verzichtet.
+  <ul style="margin-top:6px">
+    <li><b>Keine</b> Exakt-Alarm-Berechtigung nötig (<code>SCHEDULE_EXACT_ALARM</code>/<code>USE_EXACT_ALARM</code>
+      entfallen) – das vereinfacht Installation und Berechtigungsfluss.</li>
+    <li>Ab Android&nbsp;13 muss die Notification-Berechtigung (<code>POST_NOTIFICATIONS</code>) einmalig zur
+      Laufzeit abgefragt werden.</li>
+    <li>Beim ersten Start einmalig zur <b>Ausnahme von der Akkuoptimierung</b> auffordern – das ist auf
+      Geräten von Samsung, Xiaomi&nbsp;usw. der eigentliche Faktor für zuverlässige Zustellung. Der Nutzer
+      ist mit dem Whitelisting einverstanden.</li>
+    <li>Akku-Auswirkung vernachlässigbar: nur wenige kurze Alarme pro Tag, keine Dauerlast.</li>
+  </ul></div>
+
+  <h3>Zuverlässige Neuplanung</h3>
+  <p>Exakte Alarme sind <b>einmalig</b> und werden vom System bei bestimmten Ereignissen verworfen. Damit keine
+  Erinnerung ausfällt, plant die App ihre Alarme automatisch neu:</p>
+  <ul>
+    <li>nach jedem Auslösen wird direkt der <b>nächste</b> Zeitpunkt eingeplant,</li>
+    <li>nach einem <b>Geräteneustart</b> (über einen <code>BootReceiver</code>),</li>
+    <li>nach einem <b>App-Update</b> sowie bei <b>Zeit-/Zeitzonen-Änderung</b> (z.&nbsp;B. Sommerzeit).</li>
+  </ul>
+</section>
+
+<!-- 3 -->
+<section class="card">
+  <h2><span class="num">3</span> Screens, Navigation &amp; Check-in Flow</h2>
+
+  <h3>Zwei Einstiegspunkte</h3>
+  <p>Die App ist <b>notification-first</b>. Daraus ergeben sich zwei Modi:</p>
+  <ul>
+    <li><b>Notification-Tap:</b> führt <b>direkt</b> in den Check-in (Schritt&nbsp;1) – keine Startseite, keine
+      Liste. Nach dem Speichern schließt sich die App und der Nutzer landet dort, wo er vorher war.</li>
+    <li><b>Manueller Start:</b> öffnet die <b>Historie als Hauptscreen</b> – mit großem „+ Neuer Check-in"-Button
+      (FAB) und einem Zahnrad für die Einstellungen.</li>
+  </ul>
+  <div class="note rule"><b>Entscheidung:</b> Es gibt <b>keinen separaten Home-Screen</b>. Home und Historie
+  sind derselbe Screen – ein eigener Startbildschirm mit nur einem Button wäre ein verschwendeter Tap.</div>
+
+  <h3>Screen-Inventar (MVP)</h3>
+  <table>
+    <thead><tr><th>Screen</th><th>Zweck</th><th>Erreichbar über</th></tr></thead>
+    <tbody>
+      <tr><td><b>Check-in · Körperzustand</b></td><td>4 Skalen (1–5), große Buttons</td><td>Notification-Tap · FAB</td></tr>
+      <tr><td><b>Check-in · Gefühlsrad</b></td><td>Emotion + optionale Notiz + Speichern</td><td>nach Schritt&nbsp;1</td></tr>
+      <tr><td><b>Historie (= Hauptscreen)</b></td><td>Liste, nach Datum sortiert, FAB, Zahnrad</td><td>manueller Start</td></tr>
+      <tr><td><b>Eintrag-Detail / Bearbeiten</b></td><td>einen Eintrag ansehen &amp; bearbeiten</td><td>Tap auf Historie-Zeile</td></tr>
+      <tr><td><b>Einstellungen</b></td><td>Erinnerungszeiten, CSV-Export, Akku-Status</td><td>Zahnrad</td></tr>
+      <tr><td><b>Erststart-Onboarding</b></td><td><code>POST_NOTIFICATIONS</code> + Akku-Ausnahme</td><td>nur beim ersten Start</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Der Check-in-Flow im Detail</h3>
+  <p>Der Check-in besteht aus zwei <b>verpflichtenden</b> Schritten. Manuelle und Notification-Check-ins nutzen
+  <b>denselben Flow</b>.</p>
+  <div class="flow">
+    <div class="step"><b>Schritt 1 – Körperzustand</b>Alle 4 Skalen auf <b>einem</b> Screen (gestapelt, je ein Tap).
+      „Weiter" wird erst aktiv, wenn alle 4 Werte gesetzt sind.</div>
+    <div class="step"><b>Schritt 2 – Gefühlsrad</b>Kategorie → Scheibe → äußerste Emotion (Ebene&nbsp;3).
+      Darunter eingeklappt das optionale Notizfeld. „Speichern" wird aktiv, sobald eine Emotion gewählt ist.</div>
+    <div class="step"><b>Speichern</b>Datensatz wird direkt persistiert (kein Zusammenfassungs-Screen),
+      kurze Bestätigung („Gespeichert ✓"). Danach: aus Notification → App schließen; manuell → zurück zur Historie.</div>
+  </div>
+
+  <h3>Flow-Entscheidungen</h3>
+  <ul>
+    <li><b>Granularität:</b> Alle 4 Körper-Skalen auf einem Screen (nicht je ein Screen) – für Tempo.</li>
+    <li><b>Fortschritt:</b> Explizite Buttons („Weiter"/„Speichern"), die erst bei vollständigem Schritt
+      aktiv werden – <b>kein</b> automatisches Weiterspringen.</li>
+    <li><b>Notiz:</b> Eingeklappt am Ende des Gefühlsrad-Screens – nie ein eigener Schritt.</li>
+    <li><b>Kein Zusammenfassungs-Screen:</b> direkt speichern (Einträge sind ohnehin nachträglich editierbar).</li>
+    <li><b>Abbruch (Hybrid):</b> Noch nichts eingegeben → Verlassen schließt still. Bereits etwas eingegeben →
+      kleine Rückfrage <i>„Verwerfen?"</i>, damit ein halbfertiger Check-in nicht versehentlich verloren geht.</li>
+  </ul>
+  <div class="note rule"><b>Wichtige Regel:</b> Ein Datensatz wird nur gespeichert, wenn <b>beide</b> Pflichtschritte
+  abgeschlossen wurden. Abgebrochene Check-ins werden verworfen.</div>
+  <p class="muted">Happy Path ≈ 8 Taps, ohne Tippen – passt zum Ziel „in wenigen Sekunden".</p>
+</section>
+
+<!-- 4 -->
+<section class="card">
+  <h2><span class="num">4</span> Schritt 1 – Körperzustand</h2>
+  <p class="muted">Die genaue Ausgestaltung kann später angepasst werden. Aktuell vorgesehene Werte:</p>
+  <table>
+    <thead><tr><th>Feld</th><th>Skala</th><th>Eingabe</th></tr></thead>
+    <tbody>
+      <tr><td>Energie</td><td>1–5</td><td><div class="scale"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div></td></tr>
+      <tr><td>Müdigkeit</td><td>1–5</td><td><div class="scale"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div></td></tr>
+      <tr><td>Hunger / Sättigung</td><td>1–5</td><td><div class="scale"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div></td></tr>
+      <tr><td>Körperliche Anspannung</td><td>1–5</td><td><div class="scale"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div></td></tr>
+    </tbody>
+  </table>
+  <div class="note"><b>UX-Prinzip:</b> Keine Slider. Stattdessen große Buttons, direkte Auswahl, ein Tap pro Wert.</div>
+</section>
+
+<!-- 5 -->
+<section class="card">
+  <h2><span class="num">5</span> Schritt 2 – Emotion (Gefühlsrad)</h2>
+  <p>Emotionen werden über ein <b>interaktives Gefühlsrad</b> ausgewählt (MVP-Entscheidung, UI-Idee 3).
+  Das Gefühlsrad ist die primäre Eingabemethode und ersetzt Listen oder Dropdowns. Der Nutzer tippt
+  direkt auf ein Segment; die Auswahl wird visuell hervorgehoben.</p>
+
+  <div class="note rule"><b>Auswahl-Logik (entschieden):</b> Der Nutzer wählt <b>nur die äußerste, spezifischste
+  Emotion (Ebene&nbsp;3)</b>. Die übergeordnete Ebene&nbsp;2 und die Kategorie (Ebene&nbsp;1) sind feste Eltern
+  dieser Auswahl und werden <b>automatisch mitgewählt</b> – der Nutzer tippt also nur einmal. Pro Check-in wird
+  <b>genau eine</b> Emotion erfasst (keine Mehrfachauswahl).</div>
+
+  <h3>Gespeichert wird</h3>
+  <div class="pill-row">
+    <span class="pill">emotion_category</span>
+    <span class="pill">emotion_l2</span>
+    <span class="pill">emotion_l3</span>
+  </div>
+  <p class="muted">3&nbsp;Spalten (entschieden). Beispiel bei Auswahl „erfreut": <code>emotion_category = Freude</code>,
+  <code>emotion_l2 = glücklich</code>, <code>emotion_l3 = erfreut</code>.</p>
+
+  <h3>Emotions-Hierarchie</h3>
+  <p class="muted">6 primäre Kategorien, je mit Ebene 2 und Ebene 3. Jede Ebene-3-Emotion hat eine
+  fest definierte Ebene-2- und Kategorie-Zuordnung, damit aus der Auswahl alle drei Spalten eindeutig
+  abgeleitet werden können.</p>
+
+  <div class="wheel">
+
+    <details class="emotion-group" open>
+      <summary><span class="chip cat">Freude</span></summary>
+      <div class="body">
+        <div class="lvl"><div class="lbl">Ebene 2</div><div class="chips">
+          <span class="chip">optimistisch</span><span class="chip">glücklich</span><span class="chip">stolz</span>
+          <span class="chip">fröhlich</span><span class="chip">zufrieden</span><span class="chip">euphorisch</span></div></div>
+        <div class="lvl"><div class="lbl">Ebene 3</div><div class="chips">
+          <span class="chip">hoffnungsvoll</span><span class="chip">eifrig</span><span class="chip">erfreut</span>
+          <span class="chip">amüsiert</span><span class="chip">wertvoll</span><span class="chip">triumphierend</span>
+          <span class="chip">ausgelassen</span><span class="chip">beschwingt</span><span class="chip">ausgeglichen</span>
+          <span class="chip">froh</span><span class="chip">begeistert</span><span class="chip">enthusiastisch</span></div></div>
+      </div>
+    </details>
+
+    <details class="emotion-group">
+      <summary><span class="chip cat">Überraschung</span></summary>
+      <div class="body">
+        <div class="lvl"><div class="lbl">Ebene 2</div><div class="chips">
+          <span class="chip">bewegt</span><span class="chip">aufgeregt</span><span class="chip">verwirrt</span>
+          <span class="chip">erstaunt</span><span class="chip">erschrocken</span><span class="chip">überwältigt</span></div></div>
+        <div class="lvl"><div class="lbl">Ebene 3</div><div class="chips">
+          <span class="chip">angeregt</span><span class="chip">berührt</span><span class="chip">energiegeladen</span>
+          <span class="chip">aufgewühlt</span><span class="chip">desillusioniert</span><span class="chip">durcheinander</span>
+          <span class="chip">perplex</span><span class="chip">fassungslos</span><span class="chip">enttäuscht</span>
+          <span class="chip">ernüchtert</span><span class="chip">verblüfft</span><span class="chip">sprachlos</span></div></div>
+      </div>
+    </details>
+
+    <details class="emotion-group">
+      <summary><span class="chip cat">Liebe</span></summary>
+      <div class="body">
+        <div class="lvl"><div class="lbl">Ebene 2</div><div class="chips">
+          <span class="chip">verzaubert</span><span class="chip">sentimental</span><span class="chip">dankbar</span>
+          <span class="chip">romantisch</span><span class="chip">liebevoll</span><span class="chip">friedlich</span></div></div>
+        <div class="lvl"><div class="lbl">Ebene 3</div><div class="chips">
+          <span class="chip">beeindruckt</span><span class="chip">fasziniert</span><span class="chip">zart</span>
+          <span class="chip">nostalgisch</span><span class="chip">gerührt</span><span class="chip">anerkennend</span>
+          <span class="chip">verliebt</span><span class="chip">leidenschaftlich</span><span class="chip">mitfühlend</span>
+          <span class="chip">warmherzig</span><span class="chip">vertraut</span><span class="chip">ruhig</span></div></div>
+      </div>
+    </details>
+
+    <details class="emotion-group">
+      <summary><span class="chip cat">Wut</span></summary>
+      <div class="body">
+        <div class="lvl"><div class="lbl">Ebene 2</div><div class="chips">
+          <span class="chip">hasserfüllt</span><span class="chip">gereizt</span><span class="chip">kritisch</span>
+          <span class="chip">angeekelt</span><span class="chip">aufgebracht</span><span class="chip">eifersüchtig</span></div></div>
+        <div class="lvl"><div class="lbl">Ebene 3</div><div class="chips">
+          <span class="chip">verärgert</span><span class="chip">verletzt</span><span class="chip">genervt</span>
+          <span class="chip">erregt</span><span class="chip">abweisend</span><span class="chip">skeptisch</span>
+          <span class="chip">ablehnend</span><span class="chip">verächtlich</span><span class="chip">rasend</span>
+          <span class="chip">zornig</span><span class="chip">neidisch</span><span class="chip">nachtragend</span></div></div>
+      </div>
+    </details>
+
+    <details class="emotion-group">
+      <summary><span class="chip cat">Angst</span></summary>
+      <div class="body">
+        <div class="lvl"><div class="lbl">Ebene 2</div><div class="chips">
+          <span class="chip">verängstigt</span><span class="chip">abgelehnt</span><span class="chip">entsetzt</span>
+          <span class="chip">nervös</span><span class="chip">unsicher</span><span class="chip">geschockt</span></div></div>
+        <div class="lvl"><div class="lbl">Ebene 3</div><div class="chips">
+          <span class="chip">panisch</span><span class="chip">verfolgt</span><span class="chip">ausgeschlossen</span>
+          <span class="chip">unzureichend</span><span class="chip">bestürzt</span><span class="chip">erschüttert</span>
+          <span class="chip">besorgt</span><span class="chip">unruhig</span><span class="chip">unterlegen</span>
+          <span class="chip">minderwertig</span><span class="chip">hilflos</span><span class="chip">starr</span></div></div>
+      </div>
+    </details>
+
+    <details class="emotion-group">
+      <summary><span class="chip cat">Trauer</span></summary>
+      <div class="body">
+        <div class="lvl"><div class="lbl">Ebene 2</div><div class="chips">
+          <span class="chip">verzweifelt</span><span class="chip">schuldig</span><span class="chip">gleichgültig</span>
+          <span class="chip">deprimiert</span><span class="chip">verletzt</span><span class="chip">einsam</span></div></div>
+        <div class="lvl"><div class="lbl">Ebene 3</div><div class="chips">
+          <span class="chip">hoffnungslos</span><span class="chip">machtlos</span><span class="chip">beschämt</span>
+          <span class="chip">betroffen</span><span class="chip">apathisch</span><span class="chip">ausdruckslos</span>
+          <span class="chip">miserabel</span><span class="chip">leer</span><span class="chip">beleidigt</span>
+          <span class="chip">gekränkt</span><span class="chip">vernachlässigt</span><span class="chip">isoliert</span></div></div>
+      </div>
+    </details>
+
+  </div>
+
+  <h3>Verbindliche Hierarchie-Zuordnung <span class="tag nice" style="margin-left:4px">Bestätigt</span></h3>
+  <p class="muted">1:1 aus dem originalen Gefühlsrad übernommen (Quelle: Foto des Papier-Rads, abgeglichen
+  am 26.06.2026). Diese Zuordnung ist die <b>maßgebliche Wahrheit</b> für die App: Da der Nutzer nur die
+  äußerste Emotion (Ebene&nbsp;3) wählt, werden <code>emotion_l2</code> und <code>emotion_category</code>
+  eindeutig aus dieser Tabelle abgeleitet.</p>
+  <table>
+    <thead><tr><th style="width:90px">Kategorie</th><th style="width:160px">Ebene 2</th><th>Ebene 3 (wählbar)</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="6" style="background:#F2B33D;color:#3a2c00;font-weight:700;vertical-align:top">Freude</td><td>optimistisch</td><td>hoffnungsvoll · eifrig</td></tr>
+      <tr><td>glücklich</td><td>erfreut · amüsiert</td></tr>
+      <tr><td>stolz</td><td>wertvoll · triumphierend</td></tr>
+      <tr><td>fröhlich</td><td>ausgelassen · beschwingt</td></tr>
+      <tr><td>zufrieden</td><td>ausgeglichen · froh</td></tr>
+      <tr><td>euphorisch</td><td>begeistert · enthusiastisch</td></tr>
+
+      <tr><td rowspan="6" style="background:#3BB9C4;color:#06343a;font-weight:700;vertical-align:top">Überraschung</td><td>bewegt</td><td>angeregt · berührt</td></tr>
+      <tr><td>aufgeregt</td><td>energiegeladen · aufgewühlt</td></tr>
+      <tr><td>verwirrt</td><td>desillusioniert · durcheinander</td></tr>
+      <tr><td>erstaunt</td><td>perplex · fassungslos</td></tr>
+      <tr><td>erschrocken</td><td>enttäuscht · ernüchtert</td></tr>
+      <tr><td>überwältigt</td><td>verblüfft · sprachlos</td></tr>
+
+      <tr><td rowspan="6" style="background:#E86A92;color:#46101f;font-weight:700;vertical-align:top">Liebe</td><td>verzaubert</td><td>beeindruckt · fasziniert</td></tr>
+      <tr><td>sentimental</td><td>zart · nostalgisch</td></tr>
+      <tr><td>dankbar</td><td>gerührt · anerkennend</td></tr>
+      <tr><td>romantisch</td><td>verliebt · leidenschaftlich</td></tr>
+      <tr><td>liebevoll</td><td>mitfühlend · warmherzig</td></tr>
+      <tr><td>friedlich</td><td>vertraut · ruhig</td></tr>
+
+      <tr><td rowspan="6" style="background:#D9534F;color:#fff;font-weight:700;vertical-align:top">Wut</td><td>hasserfüllt</td><td>verärgert · verletzt</td></tr>
+      <tr><td>gereizt</td><td>genervt · erregt</td></tr>
+      <tr><td>kritisch</td><td>abweisend · skeptisch</td></tr>
+      <tr><td>angeekelt</td><td>ablehnend · verächtlich</td></tr>
+      <tr><td>aufgebracht</td><td>rasend · zornig</td></tr>
+      <tr><td>eifersüchtig</td><td>neidisch · nachtragend</td></tr>
+
+      <tr><td rowspan="6" style="background:#8E6FC9;color:#fff;font-weight:700;vertical-align:top">Angst</td><td>verängstigt</td><td>panisch · verfolgt</td></tr>
+      <tr><td>abgelehnt</td><td>ausgeschlossen · unzureichend</td></tr>
+      <tr><td>entsetzt</td><td>bestürzt · erschüttert</td></tr>
+      <tr><td>nervös</td><td>besorgt · unruhig</td></tr>
+      <tr><td>unsicher</td><td>unterlegen · minderwertig</td></tr>
+      <tr><td>geschockt</td><td>hilflos · starr</td></tr>
+
+      <tr><td rowspan="6" style="background:#4A7FB5;color:#fff;font-weight:700;vertical-align:top">Trauer</td><td>verzweifelt</td><td>hoffnungslos · machtlos</td></tr>
+      <tr><td>schuldig</td><td>beschämt · betroffen</td></tr>
+      <tr><td>gleichgültig</td><td>apathisch · ausdruckslos</td></tr>
+      <tr><td>deprimiert</td><td>miserabel · leer</td></tr>
+      <tr><td>verletzt</td><td>beleidigt · gekränkt</td></tr>
+      <tr><td>einsam</td><td>vernachlässigt · isoliert</td></tr>
+    </tbody>
+  </table>
+  <div class="note"><b>Hinweis zu Mehrdeutigkeit:</b> „verletzt" kommt zweimal vor – als Ebene&nbsp;3 unter
+  <i>Wut → hasserfüllt</i> und als Ebene&nbsp;2 unter <i>Trauer</i>. Da stets alle drei Ebenen gespeichert
+  werden, bleibt jeder Eintrag eindeutig.</div>
+</section>
+
+<!-- 6 -->
+<section class="card">
+  <h2><span class="num">6</span> Optionale Notiz</h2>
+  <p>Freiwilliges Textfeld – <b>eingeklappt</b>, <b>optional</b>, keine Pflicht. Ziel: zusätzliche
+  Kontextinformationen ermöglichen, ohne den Check-in zu verlangsamen.</p>
+</section>
+
+<!-- 7 -->
+<section class="card">
+  <h2><span class="num">7</span> Datenmodell &amp; Speicherung</h2>
+  <p>Technologie: <b>SQLite</b> via <b>Room</b>. Tabelle <code>checkin_entries</code>.
+  Jeder Datensatz hält den <b>genauen Zeitpunkt der Aufnahme</b> fest – gespeichert als Epoch (UTC) plus
+  lokale Zeitzone, damit spätere Tageszeit-Auswertungen auch über Sommerzeit hinweg eindeutig bleiben.</p>
+  <div class="data-fields">
+    <div class="field"><b>id</b><span>Primärschlüssel</span></div>
+    <div class="field"><b>timestamp</b><span>Aufnahmezeitpunkt · Epoch (UTC)</span></div>
+    <div class="field"><b>timezone</b><span>lokale Zeitzone bei Aufnahme</span></div>
+    <div class="field"><b>energy</b><span>Körper · 1–5</span></div>
+    <div class="field"><b>fatigue</b><span>Müdigkeit · 1–5</span></div>
+    <div class="field"><b>hunger</b><span>Hunger/Sättigung · 1–5</span></div>
+    <div class="field"><b>tension</b><span>Anspannung · 1–5</span></div>
+    <div class="field"><b>emotion_category</b><span>Kategorie · Ebene 1</span></div>
+    <div class="field"><b>emotion_l2</b><span>Ebene 2 (autom.)</span></div>
+    <div class="field"><b>emotion_l3</b><span>gewählte Emotion · Ebene 3</span></div>
+    <div class="field"><b>note</b><span>optional · Text</span></div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="card">
+  <h2><span class="num">8</span> Historie <span class="muted" style="font-size:13px;font-weight:400">(= Hauptscreen bei manuellem Start)</span></h2>
+  <p>Die Historie ist zugleich der <b>Einstiegsscreen</b>, wenn die App manuell geöffnet wird – mit
+  „+ Neuer Check-in"-FAB und Zahnrad für die Einstellungen (siehe Abschnitt&nbsp;3).</p>
+  <ul>
+    <li>Einträge anzeigen (Liste, <b>nach Datum sortiert</b>)</li>
+    <li>Eintrag antippen → <b>kombinierter Detail-/Bearbeiten-Screen</b>: alle Werte sichtbar, Tippen zum Ändern.
+      (Statt den zweistufigen Check-in-Flow erneut abzuspielen – schneller für kleine Korrekturen.)</li>
+    <li><b>Löschen:</b> Swipe-to-delete auf der Liste mit <b>Undo-Snackbar</b> (keine blockierende Rückfrage –
+      Undo ist schneller und schonender; relevant, weil ein Fehl-Tap auf eine Notification einen Junk-Eintrag
+      erzeugen kann).</li>
+  </ul>
+  <div class="note rule"><b>Entschieden:</b> Bearbeitungen müssen <b>nicht</b> getrackt werden – es gibt keine
+  <code>edited_at</code>-Spalte und keine Versionierung. Ein bearbeiteter Eintrag wird einfach überschrieben;
+  der ursprüngliche <code>timestamp</code> (Aufnahmezeitpunkt) bleibt erhalten.</div>
+</section>
+
+<!-- 9 -->
+<section class="card">
+  <h2><span class="num">9</span> Export &amp; Backup</h2>
+  <h3>CSV-Export <span class="tag must">Muss</span></h3>
+  <p>Export der Rohdaten als CSV in den <b>Download-Ordner</b>. Beispiel-Dateiname:
+  <code>checkins_2025-07.csv</code></p>
+  <div class="note rule"><b>Entschieden:</b> Es wird <b>immer der komplette Datenbestand</b> exportiert –
+  keine Zeitraum- oder Auswahloptionen. Ziel-Ordner ist der Download-Ordner (über das Storage Access
+  Framework, ohne zusätzliche Speicher-Berechtigung). Das Notiz-Feld wird CSV-konform gequotet, damit
+  Kommas und Zeilenumbrüche die Struktur nicht zerstören.</div>
+  <h3>Android Backup <span class="tag should">Soll</span></h3>
+  <p>Unterstützung von Androids Backup-Mechanismen, sodass Daten bei Gerätewechsel oder
+  Wiederherstellung erhalten bleiben.</p>
+</section>
+
+<!-- 10 -->
+<section class="card">
+  <h2><span class="num">10</span> Datenschutz</h2>
+  <p>Keine besonderen Anforderungen. <b>Nicht</b> vorgesehen:</p>
+  <div class="pill-row">
+    <span class="pill" style="background:#ecedf1;color:#5c6675">PIN-Schutz</span>
+    <span class="pill" style="background:#ecedf1;color:#5c6675">Biometrie</span>
+    <span class="pill" style="background:#ecedf1;color:#5c6675">Verschlüsselung</span>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="card">
+  <h2><span class="num">11</span> Technischer Stack &amp; Prioritäten</h2>
+  <div class="pill-row">
+    <span class="pill">Kotlin</span>
+    <span class="pill">Jetpack Compose</span>
+    <span class="pill">Room</span>
+    <span class="pill">DataStore</span>
+    <span class="pill">AlarmManager</span>
+    <span class="pill">BootReceiver</span>
+  </div>
+  <h3>Prioritäten (höchste zuerst)</h3>
+  <ol>
+    <li>Zuverlässige Notifications</li>
+    <li>Direktes Öffnen des Check-ins</li>
+    <li>Schnelle Dateneingabe</li>
+    <li>Robuste lokale Speicherung</li>
+    <li>CSV-Export</li>
+  </ol>
+</section>
+
+<!-- 12 -->
+<section class="card">
+  <h2><span class="num">12</span> Definition of Done (MVP)</h2>
+  <div class="note rule">
+    Ein Nutzer erhält eine Notification, tippt darauf, beantwortet innerhalb weniger Sekunden die Fragen
+    zu Körper und Emotion, speichert den Check-in und kann die gesammelten Daten später als CSV exportieren.
+    Das gesamte System funktioniert lokal, zuverlässig und ohne unnötige Komplexität.
+  </div>
+</section>
+
+<!-- OPEN QUESTIONS -->
+<section class="card" style="border-color:#c7c0fb;">
+  <h2><span class="num">✓</span> Geklärte Fragen &amp; Entscheidungen</h2>
+  <p class="muted">Alle zuvor offenen Punkte wurden mit Hans abgestimmt (Stand 26.06.2026) und sind unten
+  dokumentiert. Die getroffenen Entscheidungen sind bereits in die Abschnitte oben eingearbeitet.</p>
+
+  <ol class="q">
+    <li><b>Gefühlsrad: Auswahl-Tiefe und Pflichtgrad <span class="tag nice" style="margin-left:4px">Geklärt</span></b>
+      <div class="why"><b>Entscheidung:</b> Es wird <b>nur die äußerste Emotion (Ebene&nbsp;3)</b> gewählt; die
+      inneren Ebenen (Ebene&nbsp;2 + Kategorie) sind feste Eltern und werden <b>automatisch mitgewählt</b>.
+      <b>Genau eine</b> Emotion pro Check-in (keine Mehrfachauswahl). Siehe Abschnitt&nbsp;5.</div></li>
+
+    <li><b>„Ebene 2" vs. „Ebene 3" in der Datenstruktur <span class="tag nice" style="margin-left:4px">Geklärt</span></b>
+      <div class="why"><b>Entscheidung:</b> <b>3 Spalten</b> in der Tabelle – <code>emotion_category</code>,
+      <code>emotion_l2</code>, <code>emotion_l3</code>. Da nur Ebene&nbsp;3 ausgewählt wird und die Eltern fest
+      zugeordnet sind, sind alle drei Werte eindeutig. Mehrdeutige Begriffe wie „verletzt" (in <i>Wut</i> und
+      <i>Trauer</i>) werden durch die mitgespeicherte Kategorie eindeutig. Siehe Abschnitte&nbsp;5 und&nbsp;7.</div></li>
+
+    <li><b>Skalen-Richtung & Bedeutung <span class="tag nice" style="margin-left:4px">Geklärt</span></b>
+      <div class="why"><b>Entscheidung:</b> Die konkrete Richtung ist egal – aber jede Skala <b>muss klar definiert
+      und in der UI beschriftet sein</b> (z.&nbsp;B. „1 = keine, 5 = stark"). Die Festlegung pro Skala (inkl.
+      „Hunger/Sättigung") wird vor der Umsetzung dokumentiert und in der UI angezeigt.</div></li>
+
+    <li><b>Bearbeiten von Einträgen vs. CSV-Integrität <span class="tag nice" style="margin-left:4px">Geklärt</span></b>
+      <div class="why"><b>Entscheidung:</b> Die Bearbeitung muss <b>nicht getrackt</b> werden – keine
+      <code>edited_at</code>-Spalte, keine Versionierung. Ein bearbeiteter Eintrag wird überschrieben, der
+      ursprüngliche <code>timestamp</code> bleibt erhalten. Siehe Abschnitt&nbsp;8.</div></li>
+
+    <li><b>Android 13+ Notification-Permission & exakte Alarme <span class="tag nice" style="margin-left:4px">Geklärt (revidiert)</span></b>
+      <div class="why"><b>Entscheidung (von Hans bestätigt):</b> Eine Abweichung von ~15&nbsp;min ist <b>akzeptabel</b>,
+      nur ~1&nbsp;h wäre zu ungenau. Daher werden <b>inexakte, Doze-feste Alarme</b> (<code>setAndAllowWhileIdle()</code>)
+      verwendet – exakte Alarme und die Sonderberechtigung entfallen, siehe Abschnitt&nbsp;2.
+      <span class="muted">(Dies revidiert die zuvor dokumentierte Exakt-Entscheidung.)</span>
+      Offen bleibt nur die Standard-Berechtigung ab Android&nbsp;13: <code>POST_NOTIFICATIONS</code> muss zur Laufzeit
+      einmalig abgefragt werden. Die Tabelle unten bleibt zur Dokumentation der Alternativen.
+      <div style="margin-top:10px"><b>Geschätzte Abweichung je Option</b> (Vergleich, der zur Entscheidung führte) –
+      Reihenfolge von „pünktlich, aber heikel" zu „entspannt, aber ungenau":</div>
+      <table style="margin-top:8px">
+        <thead><tr><th>Mechanismus</th><th>Typ. Abweichung</th><th>Worst case</th><th>Anmerkung</th></tr></thead>
+        <tbody>
+          <tr><td><code>setExactAndAllowWhileIdle()</code><br><span class="muted" style="font-size:12px">exakt, „nicht so exakt"-Alternative <b>nicht</b> nötig</span></td>
+            <td>Sekunden (&lt; 5&nbsp;s)</td><td>1–2&nbsp;min</td>
+            <td>Braucht <code>SCHEDULE_EXACT_ALARM</code>-Permission; in tiefem Doze auf ~1×/9&nbsp;min gedrosselt</td></tr>
+          <tr><td><code>setAndAllowWhileIdle()</code><br><span class="muted" style="font-size:12px">inexakt, aber Doze-fest</span></td>
+            <td>wenige Minuten</td><td>~15&nbsp;min</td>
+            <td>Feuert im nächsten Doze-Wartungsfenster; <b>keine</b> Sonderberechtigung nötig – guter Kompromiss</td></tr>
+          <tr><td><code>set()</code> / <code>setWindow()</code> inexakt</td>
+            <td>Minuten bis ~15&nbsp;min</td><td>30&nbsp;min+</td>
+            <td>System bündelt Alarme zum Akkusparen; Drift wächst, je länger das Gerät ruht</td></tr>
+          <tr><td><code>WorkManager</code> (periodisch)</td>
+            <td>einige Minuten</td><td>Stunden</td>
+            <td>Min.-Intervall 15&nbsp;min, nicht für feste Uhrzeiten gedacht; bei Doze stark verzögert</td></tr>
+        </tbody>
+      </table>
+      <div class="note" style="margin-top:8px"><b>Wichtigster Faktor – OEM-Akkuoptimierung:</b> Auf Samsung, Xiaomi,
+      Huawei, OnePlus usw. kann jede Variante zusätzlich um <b>Stunden</b> verzögert oder ganz unterdrückt werden,
+      bis die App von der Optimierung ausgenommen wird. Diese Geräte-Eigenheit dominiert die Zahlen oben.</div>
+      <div style="margin-top:8px"><b>Gewählt:</b> <code>setAndAllowWhileIdle()</code> (inexakt, Doze-fest, ~15&nbsp;min
+      Worst&nbsp;case) + einmalige <code>POST_NOTIFICATIONS</code>-Abfrage und Ausnahme von der Akkuoptimierung.
+      Exakte Alarme wurden verworfen, da ~15&nbsp;min Abweichung akzeptabel sind und so keine Sonderberechtigung
+      nötig ist.</div></div></li>
+
+    <li><b>Notification-Tap führt direkt in den Check-in – auch bei mehreren offenen? <span class="tag nice" style="margin-left:4px">Geklärt</span></b>
+      <div class="why"><b>Entscheidung:</b> Alte Notifications müssen <b>nicht</b> automatisch gelöscht werden.
+      <b>Jede Notification erzeugt einen eigenen Check-in</b> mit eigenem Zeitstempel – liegen mehrere in der
+      Leiste, startet jeder Tap einen separaten Check-in.</div></li>
+
+    <li><b>CSV-Speicherort & Sonderzeichen <span class="tag nice" style="margin-left:4px">Geklärt</span></b>
+      <div class="why"><b>Entscheidung:</b> <b>Download-Ordner</b> (via Storage Access Framework, keine Berechtigung
+      nötig). Es wird <b>alles exportiert</b> – keine Auswahl-/Zeitraumoptionen. Das Notiz-Feld wird CSV-konform
+      gequotet (Kommas/Zeilenumbrüche). Siehe Abschnitt&nbsp;9.</div></li>
+
+    <li><b>Zeitzonen & Sommerzeit <span class="tag nice" style="margin-left:4px">Geklärt</span></b>
+      <div class="why"><b>Entscheidung:</b> Hans ist die konkrete Umsetzung egal – es bleibt daher bei der
+      Empfehlung aus Abschnitt&nbsp;7: <code>timestamp</code> als <b>UTC-Epoch + lokale Zeitzone</b> speichern,
+      damit Tageszeit-Auswertungen auch über Sommerzeit hinweg eindeutig sind.</div></li>
+
+    <li><b>Idee: leeres-Eingabe-Verhalten <span class="tag nice" style="margin-left:4px">Geklärt</span></b>
+      <div class="why"><b>Entscheidung:</b> <b>Alles ist verpflichtend</b> – kein Überspringen. Alle 4 Körper-Skalen
+      und die Emotion müssen ausgefüllt werden, bevor gespeichert wird.</div></li>
+
+    <li><b>Idee: schnelle Wiederholung / „nochmal gleich wie zuletzt" <span class="tag nice" style="margin-left:4px">Geklärt</span></b>
+      <div class="why"><b>Entscheidung:</b> <b>Nein</b> – bewusst nicht umgesetzt, „da das der Sinn der Übung ist".
+      Jeder Check-in soll bewusst neu beantwortet werden.</div></li>
+  </ol>
+</section>
+
+<footer class="doc">
+  Design-Dokument · Check-in Tracking App (MVP) · erstellt aus der Ideenskizze · rein lokale, private Nutzung
+</footer>
+
+</div>
+</body>
+</html>

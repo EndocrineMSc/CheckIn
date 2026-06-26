@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gefühlsrad – Interaktiver Prototyp</title>
+<style>
+  :root{
+    --bg:#eef0f5; --ink:#1f2430; --muted:#5c6675; --line:#e3e7ee;
+    --accent:#4f46e5; --card:#fff; --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.55;}
+  .page{max-width:1040px;margin:0 auto;padding:32px 20px 80px;}
+  h1{font-size:24px;margin:0 0 4px;letter-spacing:-.3px;}
+  .lead{color:var(--muted);font-size:15px;margin:0 0 26px;max-width:680px;}
+  .layout{display:flex;gap:34px;flex-wrap:wrap;align-items:flex-start;}
+
+  /* phone frame */
+  .phone{
+    width:360px;flex:0 0 360px;background:#0f1115;border-radius:38px;padding:12px;
+    box-shadow:0 18px 50px rgba(20,25,45,.28);position:relative;
+  }
+  .phone .notch{position:absolute;top:14px;left:50%;transform:translateX(-50%);
+    width:120px;height:22px;background:#0f1115;border-radius:0 0 14px 14px;z-index:5;}
+  .screen{background:#fafbfd;border-radius:28px;overflow:hidden;height:720px;display:flex;flex-direction:column;}
+  .topbar{padding:18px 18px 10px;display:flex;align-items:center;gap:10px;min-height:56px;}
+  .topbar .back{border:none;background:#eef0fe;color:var(--accent);width:34px;height:34px;border-radius:10px;
+    font-size:18px;cursor:pointer;display:none;align-items:center;justify-content:center;flex:0 0 auto;}
+  .topbar .back.show{display:inline-flex;}
+  .topbar .title{font-weight:700;font-size:16px;}
+  .topbar .step{margin-left:auto;font-size:12px;color:var(--muted);font-weight:600;}
+  .prompt{padding:0 20px 6px;font-size:13.5px;color:var(--muted);}
+
+  .wheelwrap{flex:1;display:flex;align-items:center;justify-content:center;padding:6px 8px;position:relative;}
+  svg{width:100%;height:100%;max-height:430px;touch-action:manipulation;}
+  .seg{cursor:pointer;transition:opacity .2s, transform .25s;}
+  .seg:hover{opacity:.88;}
+  .seg.dim{opacity:.18;}
+  .seg-label{font-size:9.5px;fill:#fff;font-weight:600;pointer-events:none;
+    paint-order:stroke;stroke:rgba(0,0,0,.18);stroke-width:.6px;}
+  .seg-label.cat{font-size:12px;font-weight:700;}
+  .seg.selected path{stroke:#fff;stroke-width:3px;}
+  .centerlabel{font-size:14px;font-weight:800;fill:#fff;pointer-events:none;text-anchor:middle;}
+  .centerhint{font-size:8.5px;fill:rgba(255,255,255,.85);pointer-events:none;text-anchor:middle;}
+  #stage{transform-origin:center;}
+  #stage.bloom{animation:bloom .32s ease-out;}
+  @keyframes bloom{from{opacity:0;transform:scale(.55);}to{opacity:1;transform:scale(1);}}
+
+  /* selection readout */
+  .readout{margin:0 16px 16px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;}
+  .readout .ttl{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:700;margin-bottom:8px;}
+  .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .col{background:#f6f7fb;border-radius:9px;padding:8px;text-align:center;}
+  .col .k{font-size:9.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);font-weight:700;}
+  .col .v{font-size:13px;font-weight:600;margin-top:2px;min-height:17px;}
+  .col .v.empty{color:#c2c8d2;font-weight:400;}
+  .cta{margin:2px 16px 18px;}
+  .cta button{width:100%;padding:13px;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;
+    background:var(--accent);color:#fff;transition:opacity .2s;}
+  .cta button:disabled{background:#cfd3e0;cursor:not-allowed;}
+
+  /* notes column */
+  .notes{flex:1;min-width:280px;}
+  .notes .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;margin-bottom:16px;}
+  .notes h2{font-size:16px;margin:0 0 10px;}
+  .notes h3{font-size:13.5px;margin:16px 0 4px;}
+  .notes p,.notes li{font-size:14px;color:#39414f;}
+  .notes ul{padding-left:20px;margin:6px 0;}
+  .flag{background:#fffbe9;border-left:4px solid #b97e0a;border-radius:8px;padding:10px 14px;font-size:13.5px;}
+  .legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+  .legend span{font-size:12px;font-weight:600;color:#fff;border-radius:20px;padding:3px 11px;}
+  code{background:#f0f2f7;padding:1px 5px;border-radius:4px;font-size:12.5px;font-family:"SF Mono",Menlo,monospace;}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Gefühlsrad – interaktiver Prototyp</h1>
+  <p class="lead">Schritt 2 des Check-ins. Erst die 6 Kategorien, dann „in eine Scheibe hineinzoomen": die
+  gewählte Kategorie füllt das ganze Rad, damit ihre Emotionen große Tap-Ziele werden. Probier es aus –
+  Kategorie antippen, dann eine äußere Emotion wählen.</p>
+
+  <div class="layout">
+    <!-- PHONE -->
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="topbar">
+          <button class="back" id="back">‹</button>
+          <span class="title" id="title">Wie fühlst du dich?</span>
+          <span class="step">2 / 2</span>
+        </div>
+        <div class="prompt" id="prompt">Tippe auf eine Kategorie.</div>
+        <div class="wheelwrap">
+          <svg viewBox="0 0 400 400" id="svg" aria-label="Gefühlsrad"></svg>
+        </div>
+        <div class="readout">
+          <div class="ttl">Gespeichert wird (3 Spalten)</div>
+          <div class="cols">
+            <div class="col"><div class="k">Kategorie</div><div class="v empty" id="r1">–</div></div>
+            <div class="col"><div class="k">Ebene 2</div><div class="v empty" id="r2">–</div></div>
+            <div class="col"><div class="k">Ebene 3</div><div class="v empty" id="r3">–</div></div>
+          </div>
+        </div>
+        <div class="cta"><button id="next" disabled>Weiter</button></div>
+      </div>
+    </div>
+
+    <!-- NOTES -->
+    <div class="notes">
+      <div class="card">
+        <h2>So funktioniert die Bedienung</h2>
+        <ul>
+          <li><b>Stufe 1 – Kategorie:</b> 6 farbige Scheiben (die Kern-Emotionen). Ein Tap.</li>
+          <li><b>Stufe 2 – Detail:</b> Die Kategorie „blüht auf" und füllt das ganze Rad. Innerer Ring =
+            Ebene 2, äußerer Ring = Ebene 3 (die konkrete Emotion).</li>
+          <li>Der Nutzer wählt nur den <b>äußersten</b> Ring. Ebene 2 + Kategorie werden automatisch
+            mitgespeichert – siehe Readout unten am Screen.</li>
+          <li>Tap auf die Mitte oder „‹" führt zurück zur Kategorie-Auswahl.</li>
+        </ul>
+        <div class="legend" id="legend"></div>
+      </div>
+      <div class="card">
+        <h3>✓ Ebene-2 ↔ Ebene-3-Zuordnung bestätigt</h3>
+        <div class="flag" style="background:#e6f5ec;border-left-color:#1f9d63;">Die Paarung (2 L3 je L2) ist
+        <b>1:1 aus dem originalen Gefühlsrad</b> (WhatsApp-Bild) übernommen – damit ist die Hierarchie
+        eindeutig und <code>emotion_l2</code> + <code>emotion_category</code> lassen sich aus der
+        L3-Auswahl zuverlässig ableiten. Eine Korrektur ggü. dem Design-Dokument: unter <i>Wut → gereizt</i>
+        heißt es <b>„erregt"</b> (nicht „erbost").</div>
+      </div>
+      <div class="card">
+        <h3>Was hiervon noch offen ist</h3>
+        <ul>
+          <li>Übergangs-Animation (das „Aufblühen") – hier vereinfacht; in Compose feiner umsetzbar.</li>
+          <li>Farbzuordnung der Kategorien (aktuell ein Vorschlag, anpassbar).</li>
+          <li>Beschriftungslänge: einige L3-Begriffe sind lang – evtl. kleinere Schrift oder Tap-Tooltip.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---- Datenstruktur: Paarung L2→2×L3 1:1 aus dem Gefühlsrad-Bild übernommen (bestätigt) ---- */
+const DATA = {
+  "Freude":{color:"#F2B33D", l2:{
+    "optimistisch":["hoffnungsvoll","eifrig"], "glücklich":["erfreut","amüsiert"],
+    "stolz":["wertvoll","triumphierend"], "fröhlich":["ausgelassen","beschwingt"],
+    "zufrieden":["ausgeglichen","froh"], "euphorisch":["begeistert","enthusiastisch"]}},
+  "Überraschung":{color:"#3BB9C4", l2:{
+    "bewegt":["angeregt","berührt"], "aufgeregt":["energiegeladen","aufgewühlt"],
+    "verwirrt":["desillusioniert","durcheinander"], "erstaunt":["perplex","fassungslos"],
+    "erschrocken":["enttäuscht","ernüchtert"], "überwältigt":["verblüfft","sprachlos"]}},
+  "Liebe":{color:"#E86A92", l2:{
+    "verzaubert":["beeindruckt","fasziniert"], "sentimental":["zart","nostalgisch"],
+    "dankbar":["gerührt","anerkennend"], "romantisch":["verliebt","leidenschaftlich"],
+    "liebevoll":["mitfühlend","warmherzig"], "friedlich":["vertraut","ruhig"]}},
+  "Wut":{color:"#D9534F", l2:{
+    "hasserfüllt":["verärgert","verletzt"], "gereizt":["genervt","erregt"],
+    "kritisch":["abweisend","skeptisch"], "angeekelt":["ablehnend","verächtlich"],
+    "aufgebracht":["rasend","zornig"], "eifersüchtig":["neidisch","nachtragend"]}},
+  "Angst":{color:"#8E6FC9", l2:{
+    "verängstigt":["panisch","verfolgt"], "abgelehnt":["ausgeschlossen","unzureichend"],
+    "entsetzt":["bestürzt","erschüttert"], "nervös":["besorgt","unruhig"],
+    "unsicher":["unterlegen","minderwertig"], "geschockt":["hilflos","starr"]}},
+  "Trauer":{color:"#4A7FB5", l2:{
+    "verzweifelt":["hoffnungslos","machtlos"], "schuldig":["beschämt","betroffen"],
+    "gleichgültig":["apathisch","ausdruckslos"], "deprimiert":["miserabel","leer"],
+    "verletzt ":["beleidigt","gekränkt"], "einsam":["vernachlässigt","isoliert"]}}
+};
+const CATS = Object.keys(DATA);
+const CX=200, CY=200;
+
+/* ---- geometry helpers ---- */
+function polar(r,deg){const a=(deg-90)*Math.PI/180;return [CX+r*Math.cos(a),CY+r*Math.sin(a)];}
+function sector(rIn,rOut,a0,a1){
+  const [x1,y1]=polar(rOut,a1),[x2,y2]=polar(rOut,a0),[x3,y3]=polar(rIn,a0),[x4,y4]=polar(rIn,a1);
+  const large=(a1-a0)<=180?0:1;
+  return `M${x1} ${y1} A${rOut} ${rOut} 0 ${large} 0 ${x2} ${y2} L${x3} ${y3} A${rIn} ${rIn} 0 ${large} 1 ${x4} ${y4} Z`;
+}
+function shade(hex,f){ // f<1 darken, f>1 lighten
+  const n=parseInt(hex.slice(1),16);let r=n>>16,g=(n>>8)&255,b=n&255;
+  r=Math.round(Math.min(255,r*f));g=Math.round(Math.min(255,g*f));b=Math.round(Math.min(255,b*f));
+  return `rgb(${r},${g},${b})`;
+}
+function labelTransform(deg,r){
+  const [x,y]=polar(r,deg);let rot=deg-90; if(deg>180)rot+=180;
+  return `translate(${x} ${y}) rotate(${rot})`;
+}
+const svg=document.getElementById('svg');
+const NS="http://www.w3.org/2000/svg";
+function el(tag,attrs){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);return e;}
+
+/* ---- state ---- */
+let sel={cat:null,l2:null,l3:null};
+
+function setReadout(){
+  const map=[["r1",sel.cat],["r2",sel.l2&&sel.l2.trim()],["r3",sel.l3]];
+  map.forEach(([id,val])=>{const n=document.getElementById(id);
+    n.textContent=val||"–";n.classList.toggle("empty",!val);});
+  const next=document.getElementById('next');next.disabled=!sel.l3;
+}
+
+/* ---- Stage 1: categories ---- */
+function renderCategories(){
+  document.getElementById('title').textContent="Wie fühlst du dich?";
+  document.getElementById('prompt').textContent="Tippe auf eine Kategorie.";
+  document.getElementById('back').classList.remove('show');
+  const stage=el('g',{id:'stage'});stage.classList.add('bloom');
+  CATS.forEach((cat,i)=>{
+    const a0=i*60,a1=a0+60,mid=a0+30,c=DATA[cat].color;
+    const g=el('g',{class:'seg'});
+    g.appendChild(el('path',{d:sector(64,182,a0,a1),fill:c}));
+    const t=el('text',{class:'seg-label cat',transform:labelTransform(mid,128),'text-anchor':'middle','dominant-baseline':'middle'});
+    t.textContent=cat;g.appendChild(t);
+    g.addEventListener('click',()=>openCategory(cat));
+    stage.appendChild(g);
+  });
+  const hub=el('g',{});
+  hub.appendChild(el('circle',{cx:CX,cy:CY,r:62,fill:'#fff',stroke:'#e3e7ee','stroke-width':1.5}));
+  const ht=el('text',{class:'centerhint',x:CX,y:CY-4});ht.textContent="6 Kern-";
+  const ht2=el('text',{class:'centerhint',x:CX,y:CY+8});ht2.textContent="gefühle";
+  hub.appendChild(ht);hub.appendChild(ht2);
+  stage.appendChild(hub);
+  svg.replaceChildren(stage);
+}
+
+/* ---- Stage 2: one category expanded ---- */
+function openCategory(cat){
+  sel={cat:cat,l2:null,l3:null};setReadout();
+  document.getElementById('title').textContent=cat;
+  document.getElementById('prompt').textContent="Wähle die Emotion im äußeren Ring.";
+  document.getElementById('back').classList.add('show');
+  const c=DATA[cat].color, l2names=Object.keys(DATA[cat].l2);
+  const stage=el('g',{id:'stage'});stage.classList.add('bloom');
+
+  l2names.forEach((l2,i)=>{
+    const a0=i*60,a1=a0+60,mid=a0+30;
+    // middle ring = Ebene 2 (auto, not directly selectable but tappable to pick first child)
+    const gMid=el('g',{class:'seg'});
+    gMid.appendChild(el('path',{d:sector(62,118,a0,a1),fill:shade(c,1.18)}));
+    const tm=el('text',{class:'seg-label',transform:labelTransform(mid,90),'text-anchor':'middle','dominant-baseline':'middle'});
+    tm.textContent=l2.trim();gMid.appendChild(tm);
+    stage.appendChild(gMid);
+    // outer ring = Ebene 3, two children
+    DATA[cat].l2[l2].forEach((l3,j)=>{
+      const b0=a0+j*30,b1=b0+30,bmid=b0+15;
+      const gOut=el('g',{class:'seg',"data-l2":l2,"data-l3":l3});
+      gOut.appendChild(el('path',{d:sector(118,190,b0,b1),fill:shade(c,0.78+0.16*j)}));
+      const to=el('text',{class:'seg-label',transform:labelTransform(bmid,156),'text-anchor':'middle','dominant-baseline':'middle'});
+      to.textContent=l3;gOut.appendChild(to);
+      gOut.addEventListener('click',()=>pick(cat,l2,l3,gOut));
+      stage.appendChild(gOut);
+    });
+  });
+  // center hub = back / category name
+  const hub=el('g',{style:'cursor:pointer'});
+  hub.appendChild(el('circle',{cx:CX,cy:CY,r:60,fill:c}));
+  const ct=el('text',{class:'centerlabel',x:CX,y:CY-2});ct.textContent=cat;
+  const ch=el('text',{class:'centerhint',x:CX,y:CY+14});ch.textContent="‹ zurück";
+  hub.appendChild(ct);hub.appendChild(ch);
+  hub.addEventListener('click',renderCategories);
+  stage.appendChild(hub);
+  svg.replaceChildren(stage);
+}
+
+function pick(cat,l2,l3,node){
+  sel={cat:cat,l2:l2,l3:l3};setReadout();
+  document.querySelectorAll('.seg').forEach(s=>{s.classList.remove('selected');s.classList.add('dim');});
+  node.classList.remove('dim');node.classList.add('selected');
+  // un-dim the parent middle segment for context
+  const sibs=document.querySelectorAll(`.seg[data-l2="${CSS.escape(l2)}"]`);
+  sibs.forEach(s=>s.classList.remove('dim'));
+  document.getElementById('prompt').textContent=`Gewählt: ${l3}  ·  „Weiter" zum Speichern`;
+}
+
+document.getElementById('back').addEventListener('click',renderCategories);
+document.getElementById('next').addEventListener('click',()=>{
+  alert(`Check-in würde gespeichert:\n\nKategorie: ${sel.cat}\nEbene 2: ${sel.l2.trim()}\nEbene 3: ${sel.l3}`);
+});
+
+// legend
+const legend=document.getElementById('legend');
+CATS.forEach(c=>{const s=document.createElement('span');s.textContent=c;s.style.background=DATA[c].color;legend.appendChild(s);});
+
+renderCategories();setReadout();
+</script>
+</body>
+</html>

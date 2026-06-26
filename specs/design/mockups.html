@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Check-in App – Material 3 Mockups & Designsystem</title>
+<style>
+/* ============================================================
+   DESIGN TOKENS  (Material 3, light)
+   ============================================================ */
+:root{
+  /* primary — calm indigo/periwinkle */
+  --primary:#515b92; --on-primary:#ffffff;
+  --primary-container:#dee0ff; --on-primary-container:#373f6f;
+  /* secondary / tertiary */
+  --secondary:#5a5d72; --secondary-container:#dfe0f9; --on-secondary-container:#171b2c;
+  --tertiary:#3c6472; --tertiary-container:#bfe9fa; --on-tertiary-container:#001f29;
+  /* error */
+  --error:#ba1a1a; --on-error:#ffffff; --error-container:#ffdad6; --on-error-container:#410002;
+  /* neutral surfaces (cool-lavender tinted) */
+  --surface:#fcf8fd; --on-surface:#1b1b21; --on-surface-variant:#47464f;
+  --surface-dim:#dcd9e0;
+  --sc-lowest:#ffffff; --sc-low:#f6f2fa; --sc:#f0ecf4; --sc-high:#ebe7ef; --sc-highest:#e5e1e9;
+  --outline:#78767f; --outline-variant:#c9c5d0;
+  --scrim:rgba(0,0,0,.4);
+
+  /* emotion category colors — the chromatic signature */
+  --c-freude:#f2b33d; --c-ueberraschung:#3bb9c4; --c-liebe:#e86a92;
+  --c-wut:#d9534f; --c-angst:#8e6fc9; --c-trauer:#4a7fb5;
+
+  /* shape scale */
+  --r-xs:4px; --r-sm:8px; --r-md:12px; --r-lg:16px; --r-xl:28px; --r-full:999px;
+
+  /* elevation */
+  --e1:0 1px 2px rgba(28,27,31,.18), 0 1px 3px 1px rgba(28,27,31,.10);
+  --e2:0 1px 2px rgba(28,27,31,.18), 0 2px 6px 2px rgba(28,27,31,.10);
+  --e3:0 4px 8px 3px rgba(28,27,31,.10), 0 1px 3px rgba(28,27,31,.18);
+
+  --font:"Roboto Flex","Roboto",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+body{margin:0;font-family:var(--font);background:var(--surface-dim);color:var(--on-surface);
+  line-height:1.45;-webkit-font-smoothing:antialiased;}
+
+/* ============================================================
+   PAGE CHROME (documentation around the mockups)
+   ============================================================ */
+.doc{max-width:1180px;margin:0 auto;padding:40px 22px 90px;}
+.doc-h{background:linear-gradient(135deg,#515b92,#6b6fb0);color:#fff;border-radius:var(--r-xl);
+  padding:34px 34px;box-shadow:var(--e2);margin-bottom:30px;}
+.doc-h h1{margin:0 0 6px;font-size:30px;font-weight:600;letter-spacing:-.4px;}
+.doc-h p{margin:0;opacity:.92;font-size:15px;max-width:640px;}
+.doc-h .seal{display:inline-block;margin-bottom:14px;font-size:12px;font-weight:600;letter-spacing:1.4px;
+  text-transform:uppercase;background:rgba(255,255,255,.16);padding:5px 12px;border-radius:var(--r-full);}
+.band{margin:46px 0 18px;}
+.band .k{font-size:12px;font-weight:600;letter-spacing:1.6px;text-transform:uppercase;color:var(--primary);}
+.band h2{margin:4px 0 4px;font-size:23px;font-weight:600;letter-spacing:-.2px;}
+.band p{margin:0;color:var(--on-surface-variant);font-size:14.5px;max-width:720px;}
+.panel{background:var(--sc-lowest);border:1px solid var(--outline-variant);border-radius:var(--r-lg);
+  padding:24px;}
+.cap{font-size:12px;color:var(--on-surface-variant);margin-top:10px;text-align:center;}
+
+/* token displays */
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;}
+.sw{border-radius:var(--r-md);overflow:hidden;border:1px solid var(--outline-variant);}
+.sw .chip{height:62px;}
+.sw .meta{padding:8px 10px;background:var(--sc-lowest);}
+.sw .meta b{display:block;font-size:12.5px;}
+.sw .meta span{font-size:11px;color:var(--on-surface-variant);font-family:ui-monospace,Menlo,monospace;}
+.typescale > div{padding:9px 0;border-bottom:1px solid var(--outline-variant);}
+.typescale > div:last-child{border-bottom:none;}
+.typescale small{color:var(--on-surface-variant);font-size:11px;display:block;}
+.shaperow{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end;}
+.shaperow .s{background:var(--primary-container);width:74px;height:74px;display:flex;align-items:flex-end;
+  justify-content:center;padding-bottom:6px;font-size:11px;color:var(--on-primary-container);}
+
+/* component gallery */
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+.comp{background:var(--sc-low);border:1px solid var(--outline-variant);border-radius:var(--r-lg);padding:18px;}
+.comp h4{margin:0 0 3px;font-size:14px;}
+.comp .use{margin:0 0 14px;font-size:11.5px;color:var(--on-surface-variant);}
+.comp .demo{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+
+/* screens grid */
+.screens{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:34px 26px;align-items:start;}
+.screen-cap{text-align:center;margin-top:14px;}
+.screen-cap b{font-size:14.5px;}
+.screen-cap span{display:block;font-size:12px;color:var(--on-surface-variant);margin-top:2px;}
+
+/* ============================================================
+   PHONE FRAME
+   ============================================================ */
+.phone{width:330px;margin:0 auto;background:#0e0e12;border-radius:42px;padding:9px;box-shadow:var(--e3);}
+.phone .screen{position:relative;background:var(--surface);border-radius:34px;overflow:hidden;height:704px;
+  display:flex;flex-direction:column;}
+.status{height:30px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;
+  font-size:11px;font-weight:600;color:var(--on-surface);flex:0 0 auto;}
+.status .dots{display:flex;gap:4px;align-items:center;}
+.status .dots i{width:5px;height:5px;border-radius:50%;background:var(--on-surface);opacity:.55;font-style:normal;}
+
+/* ============================================================
+   COMPONENT: top app bar
+   ============================================================ */
+.top-bar{display:flex;align-items:center;gap:6px;padding:8px 8px;min-height:56px;flex:0 0 auto;}
+.top-bar .ttl{font-size:18px;font-weight:600;letter-spacing:.1px;flex:1;}
+.top-bar.center .ttl{text-align:center;}
+.top-bar .lg-ttl{font-size:26px;font-weight:600;letter-spacing:-.2px;}
+.top-bar--large{flex-direction:column;align-items:stretch;padding:4px 8px 12px;}
+.top-bar--large .row{display:flex;align-items:center;gap:6px;min-height:48px;}
+.top-bar--large .row .sp{flex:1;}
+.top-bar--large .lg-ttl{padding:4px 8px 0;}
+
+/* COMPONENT: icon button */
+.icon-btn{width:40px;height:40px;border:none;background:transparent;border-radius:var(--r-full);
+  color:var(--on-surface-variant);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;
+  flex:0 0 auto;transition:background .15s;}
+.icon-btn:hover{background:color-mix(in srgb,var(--on-surface) 8%,transparent);}
+.icon-btn:active{background:color-mix(in srgb,var(--on-surface) 12%,transparent);}
+.icon-btn svg{width:22px;height:22px;}
+
+/* COMPONENT: step progress (2-segment) */
+.steps{display:flex;gap:5px;padding:2px 16px 4px;flex:0 0 auto;}
+.steps i{height:4px;flex:1;border-radius:var(--r-full);background:var(--surface-dim);}
+.steps i.on{background:var(--primary);}
+.step-label{padding:8px 18px 2px;font-size:12.5px;color:var(--on-surface-variant);font-weight:600;flex:0 0 auto;}
+
+/* content scroll area */
+.content{flex:1;overflow:auto;padding:6px 16px 14px;}
+.content::-webkit-scrollbar{width:0;}
+.headline{font-size:22px;font-weight:600;margin:6px 4px 2px;letter-spacing:-.2px;}
+.subline{font-size:13.5px;color:var(--on-surface-variant);margin:0 4px 14px;}
+
+/* COMPONENT: card */
+.card{background:var(--sc-low);border-radius:var(--r-lg);padding:16px;margin-bottom:12px;}
+.card--outline{background:var(--surface);border:1px solid var(--outline-variant);}
+
+/* COMPONENT: scale selector (1–5) */
+.scale{margin-bottom:14px;}
+.scale__head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;}
+.scale__name{font-size:15px;font-weight:600;}
+.scale__val{font-size:12px;font-weight:600;color:var(--primary);}
+.scale__val.empty{color:var(--outline);}
+.scale__row{display:flex;gap:7px;}
+.seg{flex:1;height:50px;border:1px solid var(--outline-variant);background:var(--sc-lowest);
+  border-radius:var(--r-md);font-size:16px;font-weight:600;color:var(--on-surface-variant);cursor:pointer;
+  transition:background .14s,color .14s,border-color .14s,transform .05s;}
+.seg:hover{background:color-mix(in srgb,var(--primary) 8%,var(--sc-lowest));}
+.seg:active{transform:scale(.96);}
+.seg[aria-checked="true"]{background:var(--primary);color:var(--on-primary);border-color:var(--primary);}
+.scale__ends{display:flex;justify-content:space-between;margin-top:5px;font-size:11px;color:var(--on-surface-variant);}
+
+/* COMPONENT: buttons */
+.m3-btn{height:48px;padding:0 24px;border-radius:var(--r-full);border:none;font-family:var(--font);
+  font-size:15px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
+  gap:8px;transition:background .15s,box-shadow .15s,opacity .15s;}
+.m3-btn svg{width:18px;height:18px;}
+.m3-btn--filled{background:var(--primary);color:var(--on-primary);}
+.m3-btn--filled:hover{box-shadow:var(--e1);background:color-mix(in srgb,#000 6%,var(--primary));}
+.m3-btn--filled:disabled{background:color-mix(in srgb,var(--on-surface) 12%,transparent);
+  color:color-mix(in srgb,var(--on-surface) 38%,transparent);cursor:not-allowed;box-shadow:none;}
+.m3-btn--tonal{background:var(--secondary-container);color:var(--on-secondary-container);}
+.m3-btn--tonal:hover{box-shadow:var(--e1);}
+.m3-btn--outline{background:transparent;color:var(--primary);border:1px solid var(--outline);}
+.m3-btn--text{background:transparent;color:var(--primary);padding:0 12px;}
+.m3-btn--text:hover{background:color-mix(in srgb,var(--primary) 8%,transparent);}
+.m3-btn--block{width:100%;}
+.btn-bar{flex:0 0 auto;padding:12px 16px 16px;background:linear-gradient(0deg,var(--surface) 70%,transparent);}
+
+/* COMPONENT: FAB / extended FAB */
+.fab{height:56px;padding:0 20px;border-radius:var(--r-lg);border:none;background:var(--primary-container);
+  color:var(--on-primary-container);font-family:var(--font);font-size:15px;font-weight:600;cursor:pointer;
+  display:inline-flex;align-items:center;gap:10px;box-shadow:var(--e2);}
+.fab svg{width:22px;height:22px;}
+.fab--abs{position:absolute;right:16px;bottom:16px;}
+
+/* COMPONENT: list item */
+.list-item{display:flex;align-items:center;gap:14px;padding:12px 8px;border-radius:var(--r-md);cursor:pointer;}
+.list-item:hover{background:var(--sc);}
+.list-item .lead{width:44px;height:44px;border-radius:var(--r-full);display:flex;align-items:center;
+  justify-content:center;flex:0 0 auto;color:#fff;font-weight:700;font-size:13px;}
+.list-item .body{flex:1;min-width:0;}
+.list-item .t1{font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px;}
+.list-item .t2{font-size:12.5px;color:var(--on-surface-variant);margin-top:2px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.list-item .meta{font-size:12px;color:var(--on-surface-variant);flex:0 0 auto;}
+.divline{height:1px;background:var(--outline-variant);margin:0 8px;opacity:.7;}
+
+/* COMPONENT: emotion chip */
+.echip{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 11px;border-radius:var(--r-full);
+  font-size:12.5px;font-weight:600;color:#fff;}
+.echip .dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.9);}
+
+/* COMPONENT: stat group (body summary) */
+.stats{display:flex;gap:6px;}
+.stat{flex:1;background:var(--sc);border-radius:var(--r-sm);padding:6px 4px;text-align:center;}
+.stat .v{font-size:16px;font-weight:700;color:var(--primary);}
+.stat .l{font-size:9.5px;color:var(--on-surface-variant);text-transform:uppercase;letter-spacing:.4px;}
+
+/* COMPONENT: text field (outlined, expandable note) */
+.note-field{margin-bottom:12px;}
+.note-toggle{display:flex;align-items:center;gap:10px;width:100%;background:transparent;border:none;
+  padding:12px 4px;font-family:var(--font);font-size:14.5px;color:var(--on-surface-variant);cursor:pointer;}
+.note-toggle svg{width:20px;height:20px;transition:transform .2s;}
+.note-field.open .note-toggle svg{transform:rotate(45deg);}
+.note-box{display:none;border:1px solid var(--outline);border-radius:var(--r-sm);padding:12px;
+  font-size:14px;color:var(--on-surface-variant);min-height:74px;}
+.note-field.open .note-box{display:block;}
+
+/* COMPONENT: switch */
+.switch{width:50px;height:30px;border-radius:var(--r-full);background:var(--surface-dim);position:relative;
+  border:2px solid var(--outline);cursor:pointer;flex:0 0 auto;transition:background .18s,border-color .18s;}
+.switch::after{content:"";position:absolute;width:16px;height:16px;border-radius:50%;background:var(--outline);
+  top:5px;left:5px;transition:transform .18s,width .18s,height .18s,background .18s;}
+.switch.on{background:var(--primary);border-color:var(--primary);}
+.switch.on::after{transform:translateX(20px);width:22px;height:22px;top:2px;left:3px;background:var(--on-primary);}
+
+/* COMPONENT: settings row */
+.set-row{display:flex;align-items:center;gap:14px;padding:14px 6px;}
+.set-row .ic{width:40px;height:40px;border-radius:var(--r-full);background:var(--secondary-container);
+  color:var(--on-secondary-container);display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+.set-row .ic svg{width:20px;height:20px;}
+.set-row .grow{flex:1;}
+.set-row .t1{font-size:15px;font-weight:600;}
+.set-row .t2{font-size:12.5px;color:var(--on-surface-variant);}
+.set-head{font-size:12.5px;font-weight:700;color:var(--primary);letter-spacing:.4px;margin:16px 6px 2px;}
+
+/* COMPONENT: snackbar */
+.snackbar{display:flex;align-items:center;gap:12px;background:#322f35;color:#f4eff5;border-radius:var(--r-xs);
+  padding:12px 12px 12px 16px;font-size:14px;box-shadow:var(--e3);}
+.snackbar .grow{flex:1;}
+.snackbar button{background:transparent;border:none;color:#c5c0ff;font-weight:600;font-family:var(--font);
+  font-size:14px;cursor:pointer;padding:6px 8px;border-radius:var(--r-xs);}
+.snack-abs{position:absolute;left:16px;right:16px;bottom:16px;}
+
+/* COMPONENT: status badge */
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:4px 10px;
+  border-radius:var(--r-full);}
+.badge.ok{background:#bfeccb;color:#0a3818;}
+.badge.warn{background:var(--error-container);color:var(--on-error-container);}
+.badge svg{width:14px;height:14px;}
+
+/* COMPONENT: dialog */
+.dialog-wrap{position:absolute;inset:0;background:var(--scrim);display:flex;align-items:center;
+  justify-content:center;padding:24px;}
+.dialog{background:var(--sc-high);border-radius:var(--r-xl);padding:24px;width:100%;box-shadow:var(--e3);}
+.dialog h3{margin:0 0 8px;font-size:20px;font-weight:600;}
+.dialog p{margin:0 0 22px;font-size:14px;color:var(--on-surface-variant);}
+.dialog .actions{display:flex;justify-content:flex-end;gap:6px;}
+
+/* empty state */
+.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:30px;color:var(--on-surface-variant);}
+.empty .glyph{width:84px;height:84px;border-radius:var(--r-full);background:var(--primary-container);
+  color:var(--on-primary-container);display:flex;align-items:center;justify-content:center;margin-bottom:16px;}
+.empty .glyph svg{width:40px;height:40px;}
+.empty b{font-size:18px;color:var(--on-surface);font-weight:600;}
+.empty p{margin:6px 0 0;font-size:13.5px;max-width:230px;}
+
+/* onboarding */
+.perm-card{display:flex;gap:14px;align-items:flex-start;background:var(--sc-low);border-radius:var(--r-lg);
+  padding:16px;margin-bottom:12px;}
+.perm-card .ic{width:46px;height:46px;border-radius:var(--r-md);background:var(--primary-container);
+  color:var(--on-primary-container);display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+.perm-card .ic svg{width:24px;height:24px;}
+.perm-card h4{margin:0 0 3px;font-size:15px;font-weight:600;}
+.perm-card p{margin:0 0 10px;font-size:12.5px;color:var(--on-surface-variant);}
+
+/* GEFÜHLSRAD (signature element) */
+.wheelwrap{position:relative;display:flex;align-items:center;justify-content:center;padding:2px 0 6px;}
+.wheelwrap svg{width:100%;max-width:300px;height:auto;touch-action:manipulation;}
+.seg-g{cursor:pointer;transition:opacity .2s;}
+.seg-g:hover{opacity:.9;}
+.seg-g.dim{opacity:.2;}
+.seg-g.sel path{stroke:#fff;stroke-width:3;}
+.wlabel{font-size:9px;fill:#fff;font-weight:600;pointer-events:none;paint-order:stroke;
+  stroke:rgba(0,0,0,.16);stroke-width:.5px;}
+.wlabel.cat{font-size:11.5px;font-weight:700;}
+.whub{font-size:13px;font-weight:800;fill:#fff;text-anchor:middle;pointer-events:none;}
+.whub.hint{font-size:8px;font-weight:600;fill:rgba(255,255,255,.85);}
+.whub.dark{fill:var(--on-surface-variant);}
+#stageA.bloom,#stageB.bloom{transform-origin:center;animation:bloom .3s ease-out;}
+@keyframes bloom{from{opacity:0;transform:scale(.6);}to{opacity:1;transform:scale(1);}}
+
+/* readout under wheel */
+.readout{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:4px 0 12px;}
+.ro{background:var(--sc);border-radius:var(--r-md);padding:9px 6px;text-align:center;}
+.ro .k{font-size:9.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--on-surface-variant);font-weight:700;}
+.ro .v{font-size:13px;font-weight:600;margin-top:3px;min-height:17px;}
+.ro .v.empty{color:var(--outline);font-weight:400;}
+
+/* accessibility */
+:focus-visible{outline:3px solid var(--tertiary);outline-offset:2px;}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
+@media (max-width:480px){.doc{padding:24px 14px 70px;} .phone{width:300px;}}
+</style>
+</head>
+<body>
+<div class="doc">
+
+  <header class="doc-h">
+    <span class="seal">Material 3 · Designsystem & Screens</span>
+    <h1>Check-in App – UI-Mockups</h1>
+    <p>Ruhiges Instrument, lebendige Gefühle: Die Oberfläche tritt bewusst zurück (kühle, neutrale
+    M3-Flächen, ein einziger zurückhaltender Indigo-Akzent), damit die einzige kräftige Farbe im ganzen
+    Produkt das Gefühlsrad ist. Alle Screens sind aus wiederverwendbaren Komponenten zusammengesetzt.</p>
+  </header>
+
+  <!-- ============ TOKENS ============ -->
+  <div class="band"><div class="k">Foundations</div><h2>Farb-Rollen</h2>
+    <p>Material-3-Farbrollen statt fester Werte – so lässt sich später Dark Mode oder Dynamic Color
+    ableiten, ohne Komponenten anzufassen.</p></div>
+  <div class="panel">
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:var(--primary)"></div><div class="meta"><b>Primary</b><span>#515b92</span></div></div>
+      <div class="sw"><div class="chip" style="background:var(--primary-container)"></div><div class="meta"><b>Primary container</b><span>#dee0ff</span></div></div>
+      <div class="sw"><div class="chip" style="background:var(--secondary-container)"></div><div class="meta"><b>Secondary container</b><span>#dfe0f9</span></div></div>
+      <div class="sw"><div class="chip" style="background:var(--surface)"></div><div class="meta"><b>Surface</b><span>#fcf8fd</span></div></div>
+      <div class="sw"><div class="chip" style="background:var(--sc-high)"></div><div class="meta"><b>Surface container high</b><span>#ebe7ef</span></div></div>
+      <div class="sw"><div class="chip" style="background:var(--error-container)"></div><div class="meta"><b>Error container</b><span>#ffdad6</span></div></div>
+    </div>
+    <p class="cap">Emotions-Palette (separat, nur im Gefühlsrad): Freude, Überraschung, Liebe, Wut, Angst, Trauer.</p>
+    <div class="swatches" style="margin-top:10px">
+      <div class="sw"><div class="chip" style="background:var(--c-freude)"></div><div class="meta"><b>Freude</b><span>#f2b33d</span></div></div>
+      <div class="sw"><div class="chip" style="background:var(--c-ueberraschung)"></div><div class="meta"><b>Überraschung</b><span>#3bb9c4</span></div></div>
+      <div class="sw"><div class="chip" style="background:var(--c-liebe)"></div><div class="meta"><b>Liebe</b><span>#e86a92</span></div></div>
+      <div class="sw"><div class="chip" style="background:var(--c-wut)"></div><div class="meta"><b>Wut</b><span>#d9534f</span></div></div>
+      <div class="sw"><div class="chip" style="background:var(--c-angst)"></div><div class="meta"><b>Angst</b><span>#8e6fc9</span></div></div>
+      <div class="sw"><div class="chip" style="background:var(--c-trauer)"></div><div class="meta"><b>Trauer</b><span>#4a7fb5</span></div></div>
+    </div>
+  </div>
+
+  <div class="band"><div class="k">Foundations</div><h2>Typo- & Form-Skala</h2></div>
+  <div class="panel" style="display:grid;grid-template-columns:1fr 1fr;gap:30px;">
+    <div class="typescale">
+      <div style="font-size:26px;font-weight:600;letter-spacing:-.2px">Wie fühlst du dich?<small>Headline · 26 / 600</small></div>
+      <div style="font-size:22px;font-weight:600">Verlauf<small>Title large · 22 / 600</small></div>
+      <div style="font-size:15px;font-weight:600">Energie<small>Title medium · 15 / 600</small></div>
+      <div style="font-size:14px">Heute, 14:02 Uhr – ausgeglichen<small>Body medium · 14 / 400</small></div>
+      <div style="font-size:12px;color:var(--on-surface-variant)">Schritt 1 von 2<small>Label / caption · 12</small></div>
+    </div>
+    <div>
+      <div class="shaperow">
+        <div class="s" style="border-radius:var(--r-xs)">4</div>
+        <div class="s" style="border-radius:var(--r-sm)">8</div>
+        <div class="s" style="border-radius:var(--r-md)">12</div>
+        <div class="s" style="border-radius:var(--r-lg)">16</div>
+        <div class="s" style="border-radius:var(--r-xl)">28</div>
+        <div class="s" style="border-radius:var(--r-full)">full</div>
+      </div>
+      <p class="cap" style="text-align:left;margin-top:14px">Großzügige Rundungen ziehen sich durch – Karten,
+      Buttons und das runde Gefühlsrad sprechen dieselbe Formsprache: ein weiches, nicht-klinisches Instrument.</p>
+    </div>
+  </div>
+
+  <!-- ============ COMPONENTS ============ -->
+  <div class="band"><div class="k">Designsystem</div><h2>Komponenten-Bibliothek</h2>
+    <p>Jede Komponente ist eine wiederverwendbare CSS-Klasse und taucht in mehreren Screens auf.
+    In Compose entspricht das je einem Composable.</p></div>
+  <div class="gallery">
+    <div class="comp"><h4>Buttons</h4><p class="use">CTA „Weiter/Speichern", Sekundäraktionen</p>
+      <div class="demo">
+        <button class="m3-btn m3-btn--filled">Speichern</button>
+        <button class="m3-btn m3-btn--tonal">Zeit hinzufügen</button>
+        <button class="m3-btn m3-btn--outline">Exportieren</button>
+        <button class="m3-btn m3-btn--filled" disabled>Weiter</button>
+      </div>
+    </div>
+    <div class="comp"><h4>Skala-Auswahl (1–5)</h4><p class="use">Schritt 1 · 4×</p>
+      <div class="demo" style="display:block">
+        <div class="scale" style="margin:0">
+          <div class="scale__head"><span class="scale__name">Energie</span><span class="scale__val">3</span></div>
+          <div class="scale__row">
+            <button class="seg">1</button><button class="seg">2</button>
+            <button class="seg" aria-checked="true">3</button><button class="seg">4</button><button class="seg">5</button>
+          </div>
+          <div class="scale__ends"><span>niedrig</span><span>hoch</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="comp"><h4>Extended FAB</h4><p class="use">Verlauf-Screen</p>
+      <div class="demo"><button class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Check-in</button></div>
+    </div>
+    <div class="comp"><h4>Listeneintrag</h4><p class="use">Verlauf</p>
+      <div class="demo" style="display:block">
+        <div class="list-item" style="cursor:default">
+          <div class="lead" style="background:var(--c-freude)">Fr</div>
+          <div class="body"><div class="t1">ausgeglichen</div><div class="t2">Freude · zufrieden</div></div>
+          <div class="meta">14:02</div>
+        </div>
+      </div>
+    </div>
+    <div class="comp"><h4>Emotion-Chip</h4><p class="use">Verlauf, Detail, Readout</p>
+      <div class="demo">
+        <span class="echip" style="background:var(--c-freude)"><span class="dot"></span>ausgeglichen</span>
+        <span class="echip" style="background:var(--c-trauer)"><span class="dot"></span>einsam</span>
+      </div>
+    </div>
+    <div class="comp"><h4>Switch</h4><p class="use">Einstellungen (Erinnerung an/aus)</p>
+      <div class="demo"><div class="switch on"></div><div class="switch"></div></div>
+    </div>
+    <div class="comp"><h4>Snackbar + Undo</h4><p class="use">Speichern, Löschen</p>
+      <div class="demo" style="display:block">
+        <div class="snackbar"><span class="grow">Eintrag gelöscht</span><button>Rückgängig</button></div>
+      </div>
+    </div>
+    <div class="comp"><h4>Statusabzeichen</h4><p class="use">Einstellungen, Onboarding</p>
+      <div class="demo">
+        <span class="badge ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 6"/></svg>Erlaubt</span>
+        <span class="badge warn">Aktion nötig</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SCREENS ============ -->
+  <div class="band"><div class="k">Screens</div><h2>Die sechs Screens</h2>
+    <p>Aus den Komponenten oben zusammengesetzt. Das Gefühlsrad ist interaktiv – tippe eine Kategorie an,
+    wähle dann im äußeren Ring eine Emotion.</p></div>
+
+  <div class="screens">
+
+    <!-- 1. CHECK-IN STEP 1 -->
+    <div>
+      <div class="phone"><div class="screen">
+        <div class="status"><span>9:41</span><span class="dots"><i></i><i></i><i></i></span></div>
+        <div class="top-bar">
+          <button class="icon-btn" aria-label="Abbrechen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+          <span class="ttl">Körper</span>
+        </div>
+        <div class="steps"><i class="on"></i><i></i></div>
+        <div class="step-label">Schritt 1 von 2</div>
+        <div class="content">
+          <div class="headline">Wie geht es dir körperlich?</div>
+          <div class="subline">Ein Tippen pro Wert.</div>
+
+          <div class="scale">
+            <div class="scale__head"><span class="scale__name">Energie</span><span class="scale__val">3</span></div>
+            <div class="scale__row" data-scale>
+              <button class="seg">1</button><button class="seg">2</button>
+              <button class="seg" aria-checked="true">3</button><button class="seg">4</button><button class="seg">5</button></div>
+            <div class="scale__ends"><span>1 niedrig</span><span>5 hoch</span></div>
+          </div>
+          <div class="scale">
+            <div class="scale__head"><span class="scale__name">Müdigkeit</span><span class="scale__val">2</span></div>
+            <div class="scale__row" data-scale>
+              <button class="seg">1</button><button class="seg" aria-checked="true">2</button>
+              <button class="seg">3</button><button class="seg">4</button><button class="seg">5</button></div>
+            <div class="scale__ends"><span>1 wach</span><span>5 erschöpft</span></div>
+          </div>
+          <div class="scale">
+            <div class="scale__head"><span class="scale__name">Hunger</span><span class="scale__val">4</span></div>
+            <div class="scale__row" data-scale>
+              <button class="seg">1</button><button class="seg">2</button>
+              <button class="seg">3</button><button class="seg" aria-checked="true">4</button><button class="seg">5</button></div>
+            <div class="scale__ends"><span>1 hungrig</span><span>5 satt</span></div>
+          </div>
+          <div class="scale">
+            <div class="scale__head"><span class="scale__name">Anspannung</span><span class="scale__val">2</span></div>
+            <div class="scale__row" data-scale>
+              <button class="seg">1</button><button class="seg" aria-checked="true">2</button>
+              <button class="seg">3</button><button class="seg">4</button><button class="seg">5</button></div>
+            <div class="scale__ends"><span>1 entspannt</span><span>5 angespannt</span></div>
+          </div>
+        </div>
+        <div class="btn-bar"><button class="m3-btn m3-btn--filled m3-btn--block">Weiter</button></div>
+      </div></div>
+      <div class="screen-cap"><b>1 · Check-in – Körper</b><span>4 Skalen, beschriftete Richtung, Fortschritt 1/2</span></div>
+    </div>
+
+    <!-- 2. CHECK-IN STEP 2: GEFÜHLSRAD -->
+    <div>
+      <div class="phone"><div class="screen">
+        <div class="status"><span>9:41</span><span class="dots"><i></i><i></i><i></i></span></div>
+        <div class="top-bar">
+          <button class="icon-btn" id="wback" aria-label="Zurück"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <span class="ttl" id="wtitle">Gefühl</span>
+        </div>
+        <div class="steps"><i class="on"></i><i class="on"></i></div>
+        <div class="step-label" id="whint">Schritt 2 von 2 · Tippe eine Kategorie</div>
+        <div class="content">
+          <div class="wheelwrap"><svg viewBox="0 0 400 400" id="wheel" aria-label="Gefühlsrad"></svg></div>
+          <div class="readout">
+            <div class="ro"><div class="k">Kategorie</div><div class="v empty" id="r1">–</div></div>
+            <div class="ro"><div class="k">Ebene 2</div><div class="v empty" id="r2">–</div></div>
+            <div class="ro"><div class="k">Ebene 3</div><div class="v empty" id="r3">–</div></div>
+          </div>
+          <div class="note-field" id="notef">
+            <button class="note-toggle" id="notetoggle">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              Notiz hinzufügen (optional)</button>
+            <div class="note-box">Was beschäftigt dich gerade?</div>
+          </div>
+        </div>
+        <div class="btn-bar"><button class="m3-btn m3-btn--filled m3-btn--block" id="savebtn" disabled>Speichern</button></div>
+      </div></div>
+      <div class="screen-cap"><b>2 · Check-in – Gefühlsrad</b><span>Interaktiv · Kategorie → Scheibe → Emotion, Eltern automatisch</span></div>
+    </div>
+
+    <!-- 3. HISTORY -->
+    <div>
+      <div class="phone"><div class="screen">
+        <div class="status"><span>9:41</span><span class="dots"><i></i><i></i><i></i></span></div>
+        <div class="top-bar--large">
+          <div class="row"><span class="sp"></span>
+            <button class="icon-btn" aria-label="Einstellungen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+          </div>
+          <div class="lg-ttl">Verlauf</div>
+        </div>
+        <div class="content" style="padding-top:2px">
+          <div class="step-label" style="padding-left:6px">Heute</div>
+          <div class="list-item">
+            <div class="lead" style="background:var(--c-freude)">Fr</div>
+            <div class="body"><div class="t1">ausgeglichen</div><div class="t2">Freude · zufrieden · „guter Start"</div></div>
+            <div class="meta">14:02</div>
+          </div>
+          <div class="divline"></div>
+          <div class="list-item">
+            <div class="lead" style="background:var(--c-angst)">An</div>
+            <div class="body"><div class="t1">besorgt</div><div class="t2">Angst · nervös</div></div>
+            <div class="meta">09:00</div>
+          </div>
+          <div class="step-label" style="padding-left:6px">Gestern</div>
+          <div class="list-item">
+            <div class="lead" style="background:var(--c-liebe)">Li</div>
+            <div class="body"><div class="t1">warmherzig</div><div class="t2">Liebe · liebevoll</div></div>
+            <div class="meta">20:30</div>
+          </div>
+          <div class="divline"></div>
+          <div class="list-item">
+            <div class="lead" style="background:var(--c-trauer)">Tr</div>
+            <div class="body"><div class="t1">leer</div><div class="t2">Trauer · deprimiert</div></div>
+            <div class="meta">14:00</div>
+          </div>
+          <div class="divline"></div>
+          <div class="list-item">
+            <div class="lead" style="background:var(--c-ueberraschung)">Üb</div>
+            <div class="body"><div class="t1">angeregt</div><div class="t2">Überraschung · bewegt</div></div>
+            <div class="meta">09:02</div>
+          </div>
+        </div>
+        <button class="fab fab--abs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Check-in</button>
+      </div></div>
+      <div class="screen-cap"><b>3 · Verlauf (Hauptscreen)</b><span>Liste nach Datum · Emotion farbcodiert · FAB · Einstellungen</span></div>
+    </div>
+
+    <!-- 4. ENTRY DETAIL / EDIT -->
+    <div>
+      <div class="phone"><div class="screen">
+        <div class="status"><span>9:41</span><span class="dots"><i></i><i></i><i></i></span></div>
+        <div class="top-bar">
+          <button class="icon-btn" aria-label="Zurück"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <span class="ttl">Eintrag</span>
+          <button class="icon-btn" aria-label="Löschen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></svg></button>
+        </div>
+        <div class="content">
+          <div class="card card--outline" style="display:flex;align-items:center;gap:12px">
+            <span class="echip" style="background:var(--c-freude)"><span class="dot"></span>ausgeglichen</span>
+            <div style="margin-left:auto;text-align:right"><div style="font-size:13px;font-weight:600">Heute, 14:02</div>
+              <div style="font-size:11px;color:var(--on-surface-variant)">Aufgenommen</div></div>
+          </div>
+
+          <div class="set-head">Körper</div>
+          <div class="card">
+            <div class="stats">
+              <div class="stat"><div class="v">3</div><div class="l">Energie</div></div>
+              <div class="stat"><div class="v">2</div><div class="l">Müdig</div></div>
+              <div class="stat"><div class="v">4</div><div class="l">Hunger</div></div>
+              <div class="stat"><div class="v">2</div><div class="l">Spannung</div></div>
+            </div>
+            <button class="m3-btn m3-btn--text" style="margin-top:8px;padding-left:0">Werte ändern</button>
+          </div>
+
+          <div class="set-head">Gefühl</div>
+          <div class="card" style="display:flex;align-items:center;gap:10px">
+            <span class="echip" style="background:var(--c-freude)"><span class="dot"></span>ausgeglichen</span>
+            <span style="font-size:12.5px;color:var(--on-surface-variant)">Freude · zufrieden</span>
+            <button class="m3-btn m3-btn--text" style="margin-left:auto;padding-right:0">Ändern</button>
+          </div>
+
+          <div class="set-head">Notiz</div>
+          <div class="card" style="font-size:14px;color:var(--on-surface-variant)">guter Start in den Tag</div>
+        </div>
+        <div class="btn-bar"><button class="m3-btn m3-btn--filled m3-btn--block">Änderungen speichern</button></div>
+      </div></div>
+      <div class="screen-cap"><b>4 · Eintrag – Detail/Bearbeiten</b><span>Aufnahmezeit bleibt · alles direkt editierbar</span></div>
+    </div>
+
+    <!-- 5. SETTINGS -->
+    <div>
+      <div class="phone"><div class="screen">
+        <div class="status"><span>9:41</span><span class="dots"><i></i><i></i><i></i></span></div>
+        <div class="top-bar">
+          <button class="icon-btn" aria-label="Zurück"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <span class="ttl">Einstellungen</span>
+        </div>
+        <div class="content">
+          <div class="set-head">Erinnerungen</div>
+          <div class="card" style="padding:6px 10px">
+            <div class="set-row" style="padding-left:0">
+              <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M9 2h6"/></svg></div>
+              <div class="grow"><div class="t1">09:00</div><div class="t2">Täglich</div></div>
+              <div class="switch on"></div>
+            </div>
+            <div class="divline"></div>
+            <div class="set-row" style="padding-left:0">
+              <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M9 2h6"/></svg></div>
+              <div class="grow"><div class="t1">14:00</div><div class="t2">Täglich</div></div>
+              <div class="switch on"></div>
+            </div>
+            <div class="divline"></div>
+            <div class="set-row" style="padding-left:0">
+              <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M9 2h6"/></svg></div>
+              <div class="grow"><div class="t1">20:30</div><div class="t2">Aus</div></div>
+              <div class="switch"></div>
+            </div>
+          </div>
+          <button class="m3-btn m3-btn--tonal" style="margin:2px 0 6px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Zeit hinzufügen</button>
+
+          <div class="set-head">Daten</div>
+          <div class="card" style="padding:4px 6px">
+            <div class="set-row">
+              <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg></div>
+              <div class="grow"><div class="t1">Daten exportieren</div><div class="t2">Alle Check-ins als CSV → Download-Ordner</div></div>
+            </div>
+          </div>
+
+          <div class="set-head">Berechtigungen</div>
+          <div class="card" style="padding:4px 6px">
+            <div class="set-row">
+              <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>
+              <div class="grow"><div class="t1">Benachrichtigungen</div></div>
+              <span class="badge ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 6"/></svg>Erlaubt</span>
+            </div>
+            <div class="divline"></div>
+            <div class="set-row">
+              <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="16" height="10" rx="2"/><path d="M22 11v2M6 10v4"/></svg></div>
+              <div class="grow"><div class="t1">Akku-Optimierung</div><div class="t2">Ausgenommen – Erinnerungen kommen pünktlich</div></div>
+              <span class="badge ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 6"/></svg></span>
+            </div>
+          </div>
+        </div>
+      </div></div>
+      <div class="screen-cap"><b>5 · Einstellungen</b><span>Erinnerungszeiten · CSV-Export · Berechtigungs-Status</span></div>
+    </div>
+
+    <!-- 6. ONBOARDING -->
+    <div>
+      <div class="phone"><div class="screen">
+        <div class="status"><span>9:41</span><span class="dots"><i></i><i></i><i></i></span></div>
+        <div class="content" style="padding-top:30px">
+          <div style="width:64px;height:64px;border-radius:var(--r-lg);background:var(--primary);color:var(--on-primary);display:flex;align-items:center;justify-content:center;margin:6px 4px 18px">
+            <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+          </div>
+          <div class="headline" style="font-size:25px">Damit Erinnerungen ankommen</div>
+          <div class="subline">Zwei kurze Freigaben – danach läuft alles automatisch und offline.</div>
+
+          <div class="perm-card">
+            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>
+            <div style="flex:1"><h4>Benachrichtigungen</h4><p>Wir erinnern dich zu deinen Check-in-Zeiten.</p>
+              <button class="m3-btn m3-btn--tonal" style="height:40px">Erlauben</button></div>
+          </div>
+          <div class="perm-card">
+            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="16" height="10" rx="2"/><path d="M22 11v2M6 10v4"/></svg></div>
+            <div style="flex:1"><h4>Akku-Optimierung aus</h4><p>Sonst kommen Erinnerungen verspätet oder gar nicht.</p>
+              <button class="m3-btn m3-btn--tonal" style="height:40px">Einstellen</button></div>
+          </div>
+        </div>
+        <div class="btn-bar"><button class="m3-btn m3-btn--filled m3-btn--block">Los geht's</button></div>
+      </div></div>
+      <div class="screen-cap"><b>6 · Erststart-Onboarding</b><span>Klartext, warum die zwei Freigaben nötig sind</span></div>
+    </div>
+
+    <!-- STATE: empty history -->
+    <div>
+      <div class="phone"><div class="screen">
+        <div class="status"><span>9:41</span><span class="dots"><i></i><i></i><i></i></span></div>
+        <div class="top-bar--large">
+          <div class="row"><span class="sp"></span>
+            <button class="icon-btn" aria-label="Einstellungen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+          </div>
+          <div class="lg-ttl">Verlauf</div>
+        </div>
+        <div class="empty">
+          <div class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 14s1.5 2 3.5 2 3.5-2 3.5-2M9 9h.01M15 9h.01"/></svg></div>
+          <b>Noch keine Check-ins</b>
+          <p>Dein erster Check-in erscheint hier. Tippe auf „Check-in", um zu starten.</p>
+        </div>
+        <button class="fab fab--abs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Check-in</button>
+      </div></div>
+      <div class="screen-cap"><b>Zustand · Leerer Verlauf</b><span>Einladung zum Handeln statt leerer Fläche</span></div>
+    </div>
+
+    <!-- STATE: delete + undo + abort dialog -->
+    <div>
+      <div class="phone"><div class="screen">
+        <div class="status"><span>9:41</span><span class="dots"><i></i><i></i><i></i></span></div>
+        <div class="top-bar">
+          <button class="icon-btn" aria-label="Abbrechen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+          <span class="ttl">Körper</span>
+        </div>
+        <div class="steps"><i class="on"></i><i></i></div>
+        <div class="content" style="filter:blur(1.5px);opacity:.7">
+          <div class="headline">Wie geht es dir körperlich?</div>
+          <div class="scale"><div class="scale__head"><span class="scale__name">Energie</span><span class="scale__val">3</span></div>
+            <div class="scale__row"><button class="seg">1</button><button class="seg">2</button><button class="seg" aria-checked="true">3</button><button class="seg">4</button><button class="seg">5</button></div></div>
+        </div>
+        <div class="dialog-wrap">
+          <div class="dialog">
+            <h3>Check-in verwerfen?</h3>
+            <p>Du hast bereits etwas eingegeben. Wenn du jetzt gehst, wird dieser Check-in nicht gespeichert.</p>
+            <div class="actions">
+              <button class="m3-btn m3-btn--text">Behalten</button>
+              <button class="m3-btn m3-btn--text" style="color:var(--error)">Verwerfen</button>
+            </div>
+          </div>
+        </div>
+        <div class="snackbar snack-abs"><span class="grow">Gespeichert</span></div>
+      </div></div>
+      <div class="screen-cap"><b>Zustand · Abbruch & Bestätigung</b><span>„Verwerfen?"-Dialog + Snackbar nach dem Speichern</span></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ---------- Skala-Auswahl (Schritt 1 / Komponente) ---------- */
+document.querySelectorAll('[data-scale]').forEach(row=>{
+  row.addEventListener('click',e=>{
+    const b=e.target.closest('.seg'); if(!b)return;
+    row.querySelectorAll('.seg').forEach(s=>s.setAttribute('aria-checked','false'));
+    b.setAttribute('aria-checked','true');
+    const head=row.parentElement.querySelector('.scale__val'); if(head){head.textContent=b.textContent;head.classList.remove('empty');}
+  });
+});
+
+/* ---------- Notiz aufklappen ---------- */
+const notef=document.getElementById('notef');
+document.getElementById('notetoggle').addEventListener('click',()=>notef.classList.toggle('open'));
+
+/* ============ GEFÜHLSRAD (confirmed mapping) ============ */
+const DATA={
+ "Freude":{c:"var(--c-freude)",l2:{"optimistisch":["hoffnungsvoll","eifrig"],"glücklich":["erfreut","amüsiert"],"stolz":["wertvoll","triumphierend"],"fröhlich":["ausgelassen","beschwingt"],"zufrieden":["ausgeglichen","froh"],"euphorisch":["begeistert","enthusiastisch"]}},
+ "Überraschung":{c:"var(--c-ueberraschung)",l2:{"bewegt":["angeregt","berührt"],"aufgeregt":["energiegeladen","aufgewühlt"],"verwirrt":["desillusioniert","durcheinander"],"erstaunt":["perplex","fassungslos"],"erschrocken":["enttäuscht","ernüchtert"],"überwältigt":["verblüfft","sprachlos"]}},
+ "Liebe":{c:"var(--c-liebe)",l2:{"verzaubert":["beeindruckt","fasziniert"],"sentimental":["zart","nostalgisch"],"dankbar":["gerührt","anerkennend"],"romantisch":["verliebt","leidenschaftlich"],"liebevoll":["mitfühlend","warmherzig"],"friedlich":["vertraut","ruhig"]}},
+ "Wut":{c:"var(--c-wut)",l2:{"hasserfüllt":["verärgert","verletzt"],"gereizt":["genervt","erregt"],"kritisch":["abweisend","skeptisch"],"angeekelt":["ablehnend","verächtlich"],"aufgebracht":["rasend","zornig"],"eifersüchtig":["neidisch","nachtragend"]}},
+ "Angst":{c:"var(--c-angst)",l2:{"verängstigt":["panisch","verfolgt"],"abgelehnt":["ausgeschlossen","unzureichend"],"entsetzt":["bestürzt","erschüttert"],"nervös":["besorgt","unruhig"],"unsicher":["unterlegen","minderwertig"],"geschockt":["hilflos","starr"]}},
+ "Trauer":{c:"var(--c-trauer)",l2:{"verzweifelt":["hoffnungslos","machtlos"],"schuldig":["beschämt","betroffen"],"gleichgültig":["apathisch","ausdruckslos"],"deprimiert":["miserabel","leer"],"verletzt":["beleidigt","gekränkt"],"einsam":["vernachlässigt","isoliert"]}}
+};
+const CATS=Object.keys(DATA),CX=200,CY=200,NS="http://www.w3.org/2000/svg";
+const wheel=document.getElementById('wheel');
+function el(t,a){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e;}
+function polar(r,d){const a=(d-90)*Math.PI/180;return[CX+r*Math.cos(a),CY+r*Math.sin(a)];}
+function sector(ri,ro,a0,a1){const[x1,y1]=polar(ro,a1),[x2,y2]=polar(ro,a0),[x3,y3]=polar(ri,a0),[x4,y4]=polar(ri,a1);
+  const lg=(a1-a0)<=180?0:1;return `M${x1} ${y1} A${ro} ${ro} 0 ${lg} 0 ${x2} ${y2} L${x3} ${y3} A${ri} ${ri} 0 ${lg} 1 ${x4} ${y4} Z`;}
+function lt(d,r){const[x,y]=polar(r,d);let rot=d-90;if(d>180)rot+=180;return `translate(${x} ${y}) rotate(${rot})`;}
+const sel={cat:null,l2:null,l3:null};
+function readout(){
+  [["r1",sel.cat],["r2",sel.l2],["r3",sel.l3]].forEach(([id,v])=>{const n=document.getElementById(id);n.textContent=v||"–";n.classList.toggle("empty",!v);});
+  document.getElementById('savebtn').disabled=!sel.l3;
+}
+function stage1(){
+  document.getElementById('wtitle').textContent="Gefühl";
+  document.getElementById('whint').textContent="Schritt 2 von 2 · Tippe eine Kategorie";
+  const g=el('g',{id:'stageA',class:'bloom'});
+  CATS.forEach((cat,i)=>{const a0=i*60,a1=a0+60,mid=a0+30,sg=el('g',{class:'seg-g'});
+    sg.appendChild(el('path',{d:sector(64,180,a0,a1),fill:DATA[cat].c}));
+    const t=el('text',{class:'wlabel cat',transform:lt(mid,126),'text-anchor':'middle','dominant-baseline':'middle'});t.textContent=cat;sg.appendChild(t);
+    sg.addEventListener('click',()=>stage2(cat));g.appendChild(sg);});
+  const hub=el('g',{});hub.appendChild(el('circle',{cx:CX,cy:CY,r:62,fill:'var(--sc-lowest)',stroke:'var(--outline-variant)','stroke-width':1.5}));
+  const h1=el('text',{class:'whub hint dark',x:CX,y:CY-3});h1.textContent="6 Kern-";
+  const h2=el('text',{class:'whub hint dark',x:CX,y:CY+9});h2.textContent="gefühle";hub.appendChild(h1);hub.appendChild(h2);g.appendChild(hub);
+  wheel.replaceChildren(g);
+}
+function stage2(cat){
+  sel.cat=cat;sel.l2=null;sel.l3=null;readout();
+  document.getElementById('wtitle').textContent=cat;
+  document.getElementById('whint').textContent="Wähle eine Emotion im äußeren Ring";
+  const c=DATA[cat].c,names=Object.keys(DATA[cat].l2),g=el('g',{id:'stageB',class:'bloom'});
+  names.forEach((l2,i)=>{const a0=i*60,a1=a0+60,mid=a0+30;
+    const gm=el('g',{class:'seg-g'});gm.appendChild(el('path',{d:sector(60,116,a0,a1),fill:c,'fill-opacity':.55}));
+    const tm=el('text',{class:'wlabel',transform:lt(mid,88),'text-anchor':'middle','dominant-baseline':'middle'});tm.textContent=l2;gm.appendChild(tm);g.appendChild(gm);
+    DATA[cat].l2[l2].forEach((l3,j)=>{const b0=a0+j*30,b1=b0+30,bm=b0+15;
+      const go=el('g',{class:'seg-g','data-l2':l2});go.appendChild(el('path',{d:sector(116,190,b0,b1),fill:c,'fill-opacity':j?1:.8}));
+      const to=el('text',{class:'wlabel',transform:lt(bm,154),'text-anchor':'middle','dominant-baseline':'middle'});to.textContent=l3;go.appendChild(to);
+      go.addEventListener('click',()=>pick(cat,l2,l3,go));g.appendChild(go);});});
+  const hub=el('g',{style:'cursor:pointer'});hub.appendChild(el('circle',{cx:CX,cy:CY,r:58,fill:c}));
+  const ct=el('text',{class:'whub',x:CX,y:CY-1});ct.textContent=cat;const ch=el('text',{class:'whub hint',x:CX,y:CY+15});ch.textContent="‹ zurück";
+  hub.appendChild(ct);hub.appendChild(ch);hub.addEventListener('click',stage1);g.appendChild(hub);
+  wheel.replaceChildren(g);
+}
+function pick(cat,l2,l3,node){
+  sel.cat=cat;sel.l2=l2;sel.l3=l3;readout();
+  document.querySelectorAll('#wheel .seg-g').forEach(s=>{s.classList.remove('sel');s.classList.add('dim');});
+  node.classList.remove('dim');node.classList.add('sel');
+  document.querySelectorAll(`#wheel .seg-g[data-l2="${CSS.escape(l2)}"]`).forEach(s=>s.classList.remove('dim'));
+  document.getElementById('whint').textContent=`Gewählt: ${l3}`;
+}
+document.getElementById('wback').addEventListener('click',stage1);
+stage1();readout();
+</script>
+</body>
+</html>
