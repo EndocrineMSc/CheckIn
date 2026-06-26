@@ -3,6 +3,7 @@ package com.endocrine.checkin.data.settings
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -41,6 +42,15 @@ class ReminderPreferences(private val context: Context) {
         prefs[KEY_REMINDERS]?.decode() ?: emptyList()
     }
 
+    /** Whether the one-time onboarding has been completed. Drives first-launch routing. */
+    val onboardingComplete: Flow<Boolean> = context.dataStore.data.map { prefs ->
+        prefs[KEY_ONBOARDING_COMPLETE] ?: false
+    }
+
+    suspend fun setOnboardingComplete(complete: Boolean) {
+        context.dataStore.edit { prefs -> prefs[KEY_ONBOARDING_COMPLETE] = complete }
+    }
+
     /** Insert a new reminder or replace the existing one with the same id. */
     suspend fun upsert(reminder: ReminderPref) = update { current ->
         current.filterNot { it.id == reminder.id } + reminder
@@ -65,5 +75,6 @@ class ReminderPreferences(private val context: Context) {
 
     private companion object {
         val KEY_REMINDERS = stringPreferencesKey("reminders")
+        val KEY_ONBOARDING_COMPLETE = booleanPreferencesKey("onboarding_complete")
     }
 }
