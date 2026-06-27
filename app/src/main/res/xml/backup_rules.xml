@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-   Sample backup rules file; uncomment and customize as necessary.
-   See https://developer.android.com/guide/topics/data/autobackup
-   for details.
-   Note: This file is ignored for devices older than API 31
-   See https://developer.android.com/about/versions/12/backup-restore
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+   Auto-backup rules for Android 11 (API 30) and below.
+   We back up exactly the app's two stores so check-ins survive a device migration
+   (L4 "Soll"): the Room database and the reminder-settings DataStore.
+   Listing <include> switches backup to opt-in, so nothing else is captured.
 -->
 <full-backup-content>
-    <!--
-   <include domain="sharedpref" path="."/>
-   <exclude domain="sharedpref" path="device.xml"/>
--->
+    <!-- Room database (checkin.db) — see CheckinDatabase.NAME. -->
+    <include domain="database" path="checkin.db" />
+    <!-- Reminder settings DataStore (preferencesDataStore name = "checkin_settings"). -->
+    <include domain="file" path="datastore/checkin_settings.preferences_pb" />
 </full-backup-content>
