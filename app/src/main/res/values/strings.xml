@@ -48,6 +48,36 @@
     <string name="note_add">Notiz hinzufügen (optional)</string>
     <string name="note_placeholder">Was beschäftigt dich gerade?</string>
 
+    <!-- History -->
+    <string name="history_title">Verlauf</string>
+    <string name="history_new_checkin">Check-in</string>
+    <string name="history_deleted">Eintrag gelöscht</string>
+    <string name="history_undo">Rückgängig</string>
+    <string name="history_empty_title">Noch keine Check-ins</string>
+    <string name="history_empty_message">Dein erster Check-in erscheint hier. Tippe auf „Check-in", um zu starten.</string>
+    <string name="cd_open_settings">Einstellungen</string>
+    <string name="cd_delete_entry">Löschen</string>
+
+    <!-- Detail / edit -->
+    <string name="detail_title">Eintrag</string>
+    <string name="detail_captured">Aufgenommen</string>
+    <string name="detail_section_body">Körper</string>
+    <string name="detail_section_emotion">Gefühl</string>
+    <string name="detail_section_note">Notiz</string>
+    <string name="detail_change_values">Werte ändern</string>
+    <string name="detail_change">Ändern</string>
+    <string name="detail_done">Fertig</string>
+    <string name="detail_save">Änderungen speichern</string>
+    <string name="cd_detail_back">Zurück</string>
+    <string name="detail_delete_title">Eintrag löschen?</string>
+    <string name="detail_delete_message">Dieser Check-in wird dauerhaft entfernt.</string>
+    <string name="detail_delete_confirm">Löschen</string>
+    <string name="detail_delete_cancel">Abbrechen</string>
+    <string name="stat_energy">Energie</string>
+    <string name="stat_fatigue">Müdig</string>
+    <string name="stat_hunger">Hunger</string>
+    <string name="stat_tension">Spannung</string>
+
     <!-- Discard dialog -->
     <string name="discard_title">Check-in verwerfen?</string>
     <string name="discard_message">Du hast bereits etwas eingegeben. Wenn du jetzt gehst, wird dieser Check-in nicht gespeichert.</string>

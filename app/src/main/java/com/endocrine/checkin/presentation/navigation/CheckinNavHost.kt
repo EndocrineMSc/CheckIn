@@ -18,6 +18,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.endocrine.checkin.presentation.checkin.CheckinRoot
+import com.endocrine.checkin.presentation.detail.DetailRoot
+import com.endocrine.checkin.presentation.history.HistoryRoot
 
 /**
  * The app's single navigation host. Destinations are placeholders for now — Steps 6–8 replace
@@ -41,12 +43,10 @@ fun CheckinNavHost(
         modifier = modifier,
     ) {
         composable<History> {
-            PlaceholderScreen(
-                title = "History",
-                actions = listOf(
-                    "+ Check-in" to { navController.navigate(Checkin()) },
-                    "Einstellungen" to { navController.navigate(Settings) },
-                ),
+            HistoryRoot(
+                onOpenEntry = { id -> navController.navigate(Detail(id)) },
+                onNewCheckin = { navController.navigate(Checkin()) },
+                onOpenSettings = { navController.navigate(Settings) },
             )
         }
 
@@ -60,12 +60,8 @@ fun CheckinNavHost(
             CheckinRoot(onComplete = onComplete)
         }
 
-        composable<Detail> { backStackEntry ->
-            val route: Detail = backStackEntry.toRoute()
-            PlaceholderScreen(
-                title = "Detail #${route.entryId}",
-                actions = listOf("Zurück" to { navController.popBackStack() }),
-            )
+        composable<Detail> {
+            DetailRoot(onNavigateBack = { navController.popBackStack() })
         }
 
         composable<Settings> {
