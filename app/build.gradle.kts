@@ -36,6 +36,11 @@ android {
     buildFeatures {
         compose = true
     }
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
     room {
         schemaDirectory("$projectDir/schemas")
     }
@@ -70,11 +75,30 @@ dependencies {
     // KotlinX Serialization
     implementation(libs.kotlinx.serialization.json)
 
+    // Unit tests (JUnit5 platform + AssertK + Turbine + coroutines-test)
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter.params)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
+    testImplementation(libs.assertk)
+    testImplementation(libs.turbine)
+    testImplementation(libs.kotlinx.coroutines.test)
+    // Robolectric + JUnit4 vintage engine: a few ViewModel tests need a real android.os.Bundle
+    // (SavedStateHandle.toRoute) which the plain host JVM does not provide.
     testImplementation(libs.junit)
+    testImplementation(libs.robolectric)
+    testRuntimeOnly(libs.junit.vintage.engine)
+
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
+    androidTestImplementation(libs.assertk)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }

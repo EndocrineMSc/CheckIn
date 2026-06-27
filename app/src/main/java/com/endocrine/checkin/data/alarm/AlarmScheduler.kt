@@ -7,7 +7,6 @@ import android.content.Intent
 import com.endocrine.checkin.domain.model.Reminder
 import com.endocrine.checkin.domain.scheduler.ReminderScheduler
 import com.endocrine.checkin.notification.AlarmReceiver
-import java.util.Calendar
 
 /**
  * Schedules daily reminders as **inexact, Doze-proof** alarms
@@ -15,8 +14,7 @@ import java.util.Calendar
  * decision — no exact-alarm permission is requested. Each alarm is one-shot and re-armed by
  * [AlarmReceiver] after it fires.
  *
- * Uses [Calendar] (not `java.time`) to compute the next occurrence so it works on minSdk 25
- * without core-library desugaring.
+ * The next-occurrence time math lives in the pure, unit-tested [AlarmTime].
  */
 class AlarmScheduler(private val context: Context) : ReminderScheduler {
 
@@ -31,7 +29,7 @@ class AlarmScheduler(private val context: Context) : ReminderScheduler {
     override fun schedule(reminder: Reminder) {
         alarmManager.setAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
-            nextOccurrenceMillis(reminder.hour, reminder.minute),
+            AlarmTime.nextOccurrenceMillis(reminder.hour, reminder.minute),
             alarmPendingIntent(reminder),
         )
     }
@@ -60,18 +58,5 @@ class AlarmScheduler(private val context: Context) : ReminderScheduler {
             intent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
-    }
-
-    /** Epoch millis of the next `HH:mm` in the local zone — today if still ahead, else tomorrow. */
-    private fun nextOccurrenceMillis(hour: Int, minute: Int): Long {
-        val now = Calendar.getInstance()
-        val next = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, hour)
-            set(Calendar.MINUTE, minute)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-            if (!after(now)) add(Calendar.DAY_OF_YEAR, 1)
-        }
-        return next.timeInMillis
     }
 }
