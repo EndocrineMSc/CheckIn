@@ -88,7 +88,8 @@
     <string name="settings_add_time">Zeit hinzufügen</string>
     <string name="settings_export_title">Daten exportieren</string>
     <string name="settings_export_subtitle">Alle Check-ins als CSV → Download-Ordner</string>
-    <string name="settings_export_unavailable">Export folgt in Kürze.</string>
+    <string name="settings_export_success">Check-ins exportiert.</string>
+    <string name="settings_export_failure">Export fehlgeschlagen.</string>
     <string name="settings_perm_notifications">Benachrichtigungen</string>
     <string name="settings_perm_battery">Akku-Optimierung</string>
     <string name="settings_perm_battery_ok">Ausgenommen – Erinnerungen kommen pünktlich</string>

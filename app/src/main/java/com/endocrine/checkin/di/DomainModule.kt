@@ -2,6 +2,7 @@ package com.endocrine.checkin.di
 
 import com.endocrine.checkin.domain.usecase.DeleteCheckinUseCase
 import com.endocrine.checkin.domain.usecase.DeleteReminderUseCase
+import com.endocrine.checkin.domain.usecase.ExportCheckinsUseCase
 import com.endocrine.checkin.domain.usecase.GetCheckinUseCase
 import com.endocrine.checkin.domain.usecase.ObserveHistoryUseCase
 import com.endocrine.checkin.domain.usecase.ObserveRemindersUseCase
@@ -20,6 +21,7 @@ val domainModule: Module = module {
     factoryOf(::ObserveHistoryUseCase)
     factoryOf(::GetCheckinUseCase)
     factoryOf(::DeleteCheckinUseCase)
+    factoryOf(::ExportCheckinsUseCase)
 
     // Reminders
     factoryOf(::ObserveRemindersUseCase)

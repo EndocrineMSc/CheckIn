@@ -81,7 +81,8 @@ fun SettingsRoot(
     val context = androidx.compose.ui.platform.LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-    val exportUnavailable = stringResource(R.string.settings_export_unavailable)
+    val exportSuccess = stringResource(R.string.settings_export_success)
+    val exportFailure = stringResource(R.string.settings_export_failure)
 
     val notificationLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission(),
@@ -91,10 +92,10 @@ fun SettingsRoot(
         ActivityResultContracts.StartActivityForResult(),
     ) { viewModel.onAction(SettingsAction.RefreshPermissions) }
 
-    // Step 9 owns CSV writing; for now the picker is launched so the flow is wired end-to-end.
+    // SAF returns the chosen destination Uri (null if the user cancelled); the VM writes the CSV.
     val exportLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("text/csv"),
-    ) { scope.launch { snackbarHostState.showSnackbar(exportUnavailable) } }
+    ) { uri -> uri?.let { viewModel.onAction(SettingsAction.ExportToUri(it.toString())) } }
 
     OnResume { viewModel.onAction(SettingsAction.RefreshPermissions) }
 
@@ -110,6 +111,9 @@ fun SettingsRoot(
             }
             SettingsEvent.LaunchBatteryExemption -> batteryLauncher.launch(BatteryOptimization.requestIntent(context))
             SettingsEvent.LaunchExport -> exportLauncher.launch(defaultExportFileName())
+            is SettingsEvent.ExportFinished -> scope.launch {
+                snackbarHostState.showSnackbar(if (event.success) exportSuccess else exportFailure)
+            }
         }
     }
 

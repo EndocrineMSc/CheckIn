@@ -29,6 +29,10 @@ sealed interface SettingsAction {
     data class DeleteReminder(val id: String) : SettingsAction
 
     data object ExportData : SettingsAction
+
+    /** User picked a destination in the SAF dialog — write the CSV there. */
+    data class ExportToUri(val uri: String) : SettingsAction
+
     data object RequestNotifications : SettingsAction
     data object RequestBatteryExemption : SettingsAction
     data object NavigateBack : SettingsAction
@@ -43,4 +47,7 @@ sealed interface SettingsEvent {
 
     /** Ask the Activity layer to launch the SAF create-document picker for CSV export. */
     data object LaunchExport : SettingsEvent
+
+    /** The export finished — show a success or failure message. */
+    data class ExportFinished(val success: Boolean) : SettingsEvent
 }

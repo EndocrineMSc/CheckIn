@@ -5,10 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.endocrine.checkin.domain.model.Reminder
 import com.endocrine.checkin.domain.usecase.DeleteReminderUseCase
+import com.endocrine.checkin.domain.usecase.ExportCheckinsUseCase
 import com.endocrine.checkin.domain.usecase.ObserveRemindersUseCase
 import com.endocrine.checkin.domain.usecase.RescheduleRemindersUseCase
 import com.endocrine.checkin.domain.usecase.SetReminderEnabledUseCase
 import com.endocrine.checkin.domain.usecase.UpsertReminderUseCase
+import com.endocrine.checkin.domain.util.Result
 import com.endocrine.checkin.presentation.util.PermissionStatus
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,6 +36,7 @@ class SettingsViewModel(
     private val setReminderEnabled: SetReminderEnabledUseCase,
     private val deleteReminder: DeleteReminderUseCase,
     private val rescheduleReminders: RescheduleRemindersUseCase,
+    private val exportCheckins: ExportCheckinsUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(SettingsState())
@@ -59,6 +62,7 @@ class SettingsViewModel(
             is SettingsAction.ToggleReminder -> toggle(action.id, action.enabled)
             is SettingsAction.DeleteReminder -> delete(action.id)
             SettingsAction.ExportData -> emit(SettingsEvent.LaunchExport)
+            is SettingsAction.ExportToUri -> export(action.uri)
             SettingsAction.RequestNotifications -> emit(SettingsEvent.RequestNotificationPermission)
             SettingsAction.RequestBatteryExemption -> emit(SettingsEvent.LaunchBatteryExemption)
             SettingsAction.NavigateBack -> Unit // handled by the Root's back button
@@ -86,6 +90,13 @@ class SettingsViewModel(
     private fun toggle(id: String, enabled: Boolean) = mutate { setReminderEnabled(id, enabled) }
 
     private fun delete(id: String) = mutate { deleteReminder(id) }
+
+    private fun export(uri: String) {
+        viewModelScope.launch {
+            val result = exportCheckins(uri)
+            _events.send(SettingsEvent.ExportFinished(success = result is Result.Success))
+        }
+    }
 
     /** Apply a reminder change, then re-arm all OS alarms from the new source of truth. */
     private fun mutate(change: suspend () -> Unit) {
