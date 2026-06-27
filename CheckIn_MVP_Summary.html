@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CheckIn — MVP Feature Summary</title>
+<style>
+  :root{
+    --indigo:#515B92; --indigo-c:#DEE0FF; --on-indigo-c:#373F6F;
+    --ink:#1B1B21; --muted:#47464F; --line:#C9C5D0;
+    --surface:#FCF8FD; --card:#FFFFFF; --card-alt:#F6F2FA;
+    --ok:#2e7d32; --ok-bg:#e6f4ea;
+    --new:#1b6b3a; --new-bg:#dcf5e6;
+    --chg:#8a5a00; --chg-bg:#fdeecb;
+    /* emotion palette (only vivid colors in the product) */
+    --joy:#E6A930; --love:#E85C8A; --surprise:#33B5B5; --fear:#8E6FCB; --anger:#D4504A; --sad:#3E7CB1;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:880px;margin:0 auto;padding:32px 20px 64px}
+  header.hero{padding:36px 32px;border-radius:28px;
+    background:linear-gradient(135deg,#515B92,#373F6F);color:#fff;margin-bottom:14px}
+  .hero h1{margin:0 0 6px;font-size:30px;font-weight:700;letter-spacing:-.3px}
+  .hero p{margin:0;opacity:.92;font-size:15px;max-width:62ch}
+  .wheelstrip{display:flex;gap:6px;margin-top:18px}
+  .wheelstrip span{height:8px;flex:1;border-radius:99px}
+  .status{display:inline-flex;align-items:center;gap:7px;margin-top:18px;
+    background:rgba(255,255,255,.16);padding:6px 14px;border-radius:99px;font-size:13px;font-weight:600}
+  .status .dot{width:8px;height:8px;border-radius:99px;background:#7ce0a3;box-shadow:0 0 0 4px rgba(124,224,163,.25)}
+  h2.section{font-size:13px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;
+    color:var(--indigo);margin:42px 0 16px}
+  /* plain english */
+  .plain{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:8px 26px}
+  .bullet{display:flex;gap:16px;padding:18px 0;border-bottom:1px solid #efeaf3}
+  .bullet:last-child{border-bottom:none}
+  .bullet .ic{flex:none;width:42px;height:42px;border-radius:12px;background:var(--indigo-c);
+    color:var(--on-indigo-c);display:grid;place-items:center;font-size:21px}
+  .bullet h3{margin:0 0 2px;font-size:16px}
+  .bullet p{margin:0;color:var(--muted);font-size:14.5px}
+  /* technical */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:20px 22px;margin-bottom:16px}
+  .card .top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+  .badge{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;
+    background:var(--card-alt);border:1px solid var(--line);color:var(--on-indigo-c);
+    padding:3px 9px;border-radius:7px}
+  .tag{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+    padding:3px 9px;border-radius:99px}
+  .tag.new{color:var(--new);background:var(--new-bg)}
+  .tag.chg{color:var(--chg);background:var(--chg-bg)}
+  .card p{margin:8px 0;color:var(--muted);font-size:14.5px}
+  .card p strong{color:var(--ink)}
+  pre{margin:12px 0 4px;background:#1d2030;color:#e7e9f3;border-radius:12px;
+    padding:14px 16px;overflow-x:auto;font-size:12.8px;line-height:1.5;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  pre .c{color:#8b93b8}.pre .k{}
+  .flow{background:var(--card-alt);border:1px solid var(--line);border-radius:18px;
+    padding:18px 22px;margin-bottom:16px;font-size:14px}
+  .flow code{font-family:ui-monospace,Menlo,monospace;font-size:12.7px;
+    background:#fff;border:1px solid var(--line);padding:1px 6px;border-radius:6px}
+  .flow .arrow{color:var(--indigo);font-weight:700;padding:0 4px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:640px){.grid2{grid-template-columns:1fr}.hero{padding:28px 22px}}
+  footer{margin-top:40px;text-align:center;color:var(--muted);font-size:12.5px}
+  .pill{display:inline-block;font-size:12px;color:var(--on-indigo-c);background:var(--indigo-c);
+    padding:2px 10px;border-radius:99px;margin:2px 4px 2px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <h1>CheckIn — Personal Check-in App</h1>
+    <p>A notification-driven, offline-first Android app for capturing your body state and
+       emotion in seconds, with one-tap CSV export. Fully local — no accounts, no cloud, no sync.</p>
+    <div class="wheelstrip">
+      <span style="background:var(--joy)"></span>
+      <span style="background:var(--love)"></span>
+      <span style="background:var(--surprise)"></span>
+      <span style="background:var(--fear)"></span>
+      <span style="background:var(--anger)"></span>
+      <span style="background:var(--sad)"></span>
+    </div>
+    <div class="status"><span class="dot"></span>MVP complete · all 11 build steps done · verified end-to-end on device</div>
+  </header>
+
+  <!-- ============== PLAIN ENGLISH ============== -->
+  <h2 class="section">What this means for the user</h2>
+  <div class="plain">
+
+    <div class="bullet">
+      <div class="ic">🔔</div>
+      <div><h3>Reminders that actually arrive</h3>
+        <p>Set one or more daily times. The app nudges you with a notification — and keeps
+           working reliably even after a phone restart or a time-zone change.</p></div>
+    </div>
+
+    <div class="bullet">
+      <div class="ic">👆</div>
+      <div><h3>Tap the notification, you're already checking in</h3>
+        <p>No menus, no home screen to wade through. Tapping the reminder drops you straight
+           onto the first question.</p></div>
+    </div>
+
+    <div class="bullet">
+      <div class="ic">⚡</div>
+      <div><h3>A whole check-in in seconds — no typing</h3>
+        <p>Four quick body sliders (energy, tiredness, hunger, tension), then a colorful
+           emotion wheel to pick exactly how you feel. Save. Done.</p></div>
+    </div>
+
+    <div class="bullet">
+      <div class="ic">🎡</div>
+      <div><h3>An emotion wheel that goes deep</h3>
+        <p>Six core feelings open into finer and finer shades, so you can name the precise
+           emotion instead of settling for "good" or "bad".</p></div>
+    </div>
+
+    <div class="bullet">
+      <div class="ic">📒</div>
+      <div><h3>Your history, neatly grouped</h3>
+        <p>Every check-in is listed by day (Today / Yesterday / …). Tap one to correct it,
+           or swipe to delete — with a gentle "undo" if it was a mistake.</p></div>
+    </div>
+
+    <div class="bullet">
+      <div class="ic">📤</div>
+      <div><h3>Export everything as a spreadsheet</h3>
+        <p>One tap writes all your check-ins to a CSV file in your Downloads folder — yours
+           to open in Excel, share, or archive.</p></div>
+    </div>
+
+    <div class="bullet">
+      <div class="ic">🔒</div>
+      <div><h3>Private by design — and safe across phones</h3>
+        <p>Nothing ever leaves the device. When you switch phones, Android's backup carries
+           your check-ins and reminder settings over for you.</p></div>
+    </div>
+
+  </div>
+
+  <!-- ============== TECHNICAL ============== -->
+  <h2 class="section">Technical summary</h2>
+
+  <p style="color:var(--muted);font-size:14.5px;margin:0 0 18px">
+    Single Gradle module (<span class="badge">:app</span>), clean-architecture packages.
+    <span class="pill">Kotlin</span><span class="pill">Jetpack Compose / M3</span>
+    <span class="pill">MVI</span><span class="pill">Koin DI</span>
+    <span class="pill">Room</span><span class="pill">DataStore</span>
+    <span class="pill">type-safe Navigation</span><span class="pill">minSdk 25</span>
+  </p>
+
+  <!-- Data flow -->
+  <div class="flow">
+    <strong>End-to-end flow (the Definition of Done):</strong><br>
+    <code>AlarmManager</code> <span class="arrow">→</span> <code>AlarmReceiver</code> posts notification
+    <span class="arrow">→</span> tap fires <code>ACTION_START_CHECKIN</code>
+    <span class="arrow">→</span> <code>MainActivity</code> routes to <code>Checkin</code>
+    <span class="arrow">→</span> body scales + emotion wheel
+    <span class="arrow">→</span> <code>SaveCheckinUseCase</code> <span class="arrow">→</span> Room
+    <span class="arrow">→</span> appears in <code>History</code>
+    <span class="arrow">→</span> <code>ExportCheckinsUseCase</code> <span class="arrow">→</span> CSV via SAF.
+  </div>
+
+  <!-- Backup rules -->
+  <div class="card">
+    <div class="top">
+      <span class="badge">res/xml/backup_rules.xml · data_extraction_rules.xml</span>
+      <span class="tag chg">changed</span>
+    </div>
+    <p><strong>The Step 11 code change.</strong> The Android Studio scaffold shipped empty
+       backup rules. They now explicitly back up the two stores that hold user data, so
+       check-ins survive a device migration (covers legacy auto-backup ≤ API 30 and
+       cloud-backup + device-transfer on API 31+).</p>
+<pre><span class="c">&lt;!-- data_extraction_rules.xml --&gt;</span>
+&lt;data-extraction-rules&gt;
+  &lt;cloud-backup&gt;
+    &lt;include domain="database" path="checkin.db" /&gt;
+    &lt;include domain="file" path="datastore/checkin_settings.preferences_pb" /&gt;
+  &lt;/cloud-backup&gt;
+  &lt;device-transfer&gt; … same two includes … &lt;/device-transfer&gt;
+&lt;/data-extraction-rules&gt;</pre>
+  </div>
+
+  <!-- Alarm scheduler -->
+  <div class="card">
+    <div class="top">
+      <span class="badge">data/alarm/AlarmScheduler.kt · AlarmTime.kt</span>
+      <span class="tag new">added</span>
+    </div>
+    <p><strong>Inexact, Doze-proof alarms — no exact-alarm permission.</strong> Reliable
+       delivery on aggressive OEMs comes from <code>setAndAllowWhileIdle</code> plus a
+       battery-optimization exemption prompt, not from exact alarms (a deliberate product
+       decision: ~15&nbsp;min drift is fine). Each alarm is one-shot and re-armed after it fires.
+       The next-occurrence math is extracted into the pure, unit-tested <code>AlarmTime</code>.</p>
+<pre>alarmManager.setAndAllowWhileIdle(
+    AlarmManager.RTC_WAKEUP,
+    AlarmTime.nextOccurrenceMillis(reminder.hour, reminder.minute),
+    alarmPendingIntent(reminder),       <span class="c">// stable requestCode = id.hashCode()</span>
+)</pre>
+  </div>
+
+  <!-- Boot receiver -->
+  <div class="card">
+    <div class="top">
+      <span class="badge">notification/BootReceiver.kt · AlarmReceiver.kt</span>
+      <span class="tag new">added</span>
+    </div>
+    <p><strong>Survives reboots, updates and clock changes.</strong> Alarms do not persist
+       across a restart, so <code>BootReceiver</code> listens for
+       <code>BOOT_COMPLETED</code>, <code>MY_PACKAGE_REPLACED</code>, <code>TIME_SET</code> and
+       <code>TIMEZONE_CHANGED</code>, then re-arms every reminder
+       (<code>RescheduleRemindersUseCase</code> via <code>goAsync</code> + coroutine).
+       <code>AlarmReceiver</code> posts the notification and immediately schedules tomorrow's.
+       <em>Verified with a real device reboot — the alarm came back, exactly once.</em></p>
+  </div>
+
+  <div class="grid2">
+    <!-- Emotion wheel domain -->
+    <div class="card">
+      <div class="top">
+        <span class="badge">domain/model/EmotionWheel.kt</span>
+        <span class="tag new">added</span>
+      </div>
+      <p><strong>6 × 6 × 2 = 72 leaves.</strong> Selecting a leaf auto-resolves its parents.
+         The lookup matches <em>leaves only</em>, which sidesteps a real data quirk:
+         "verletzt" is both a leaf under <em>Wut → hasserfüllt</em> and an Ebene-2 name under
+         <em>Trauer</em> — leaf-only matching makes it unambiguous.</p>
+<pre>fun resolve(l3Leaf: String): Emotion?
+<span class="c">// "verletzt" → Wut → hasserfüllt → verletzt</span></pre>
+    </div>
+
+    <!-- CSV -->
+    <div class="card">
+      <div class="top">
+        <span class="badge">data/export/CsvSerializer.kt · CsvExporter.kt</span>
+        <span class="tag new">added</span>
+      </div>
+      <p><strong>RFC-4180 CSV, written via SAF.</strong> Pure serializer (sorted by
+         timestamp, quoted fields, <code>\r\n</code> endings) kept separate from the
+         <code>contentResolver</code> write, so the domain stays Android-free.
+         Output starts with a stable header row.</p>
+<pre><span class="c">id,timestamp,timezone,energy,fatigue,</span>
+<span class="c">hunger,tension,emotion_category,</span>
+<span class="c">emotion_l2,emotion_l3,note</span></pre>
+    </div>
+  </div>
+
+  <!-- Check-in VM / wheel UI -->
+  <div class="card">
+    <div class="top">
+      <span class="badge">presentation/checkin/ (CheckinViewModel, EmotionWheel.kt)</span>
+      <span class="tag new">added</span>
+    </div>
+    <p><strong>MVI flow + a hand-drawn wheel.</strong> A single ViewModel drives both steps,
+       mirroring in-progress fields to <code>SavedStateHandle</code> so a check-in survives
+       process death. The wheel is a custom <code>Canvas</code> (annular-sector paths,
+       two-stage bloom animated below the recomposition layer, rotated labels via
+       <code>TextMeasurer</code>) and honours the system "reduce motion" setting. It is the
+       single vivid element in an otherwise calm Material 3 palette.</p>
+  </div>
+
+  <!-- Navigation / intent routing -->
+  <div class="card">
+    <div class="top">
+      <span class="badge">MainActivity.kt · presentation/navigation/Routes.kt</span>
+      <span class="tag new">added</span>
+    </div>
+    <p><strong>Type-safe Navigation with notification-aware routing.</strong> On launch the
+       start destination is chosen from onboarding state and the launch intent; a notification
+       tap deep-links straight into the check-in and, after save, finishes the activity to
+       return the user where they were.</p>
+<pre>val startDestination = when {
+    !onboardingComplete   -> Onboarding
+    launchedFromNotification -> Checkin(fromNotification = true)
+    else                  -> History
+}</pre>
+  </div>
+
+  <!-- Tests -->
+  <div class="card">
+    <div class="top">
+      <span class="badge">src/test · src/androidTest</span>
+      <span class="tag new">added</span>
+    </div>
+    <p><strong>37 unit tests + an instrumented happy-path.</strong> JUnit5 + AssertK + Turbine
+       cover the emotion-wheel invariants, RFC-4180 round-trip, save/edit timestamp rules and
+       alarm time math; the ViewModel test runs under Robolectric (it touches
+       <code>SavedStateHandle.toRoute</code>). An instrumented test drives the full check-in,
+       tapping the Canvas wheel by computed geometry.</p>
+  </div>
+
+  <footer>
+    CheckIn MVP · built in 11 sequential steps · offline-first · German UI ·
+    Definition of Done verified end-to-end on device.
+  </footer>
+
+</div>
+</body>
+</html>
