@@ -1,18 +1,8 @@
 package com.endocrine.checkin.presentation.navigation
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -20,6 +10,8 @@ import androidx.navigation.toRoute
 import com.endocrine.checkin.presentation.checkin.CheckinRoot
 import com.endocrine.checkin.presentation.detail.DetailRoot
 import com.endocrine.checkin.presentation.history.HistoryRoot
+import com.endocrine.checkin.presentation.onboarding.OnboardingRoot
+import com.endocrine.checkin.presentation.settings.SettingsRoot
 
 /**
  * The app's single navigation host. Destinations are placeholders for now — Steps 6–8 replace
@@ -65,17 +57,18 @@ fun CheckinNavHost(
         }
 
         composable<Settings> {
-            PlaceholderScreen(
-                title = "Einstellungen",
-                actions = listOf("Zurück" to { navController.popBackStack() }),
-            )
+            SettingsRoot(onNavigateBack = { navController.popBackStack() })
         }
 
         composable<Onboarding> {
-            // Step 8 owns the real onboarding (it sets the onboardingComplete flag on finish).
-            PlaceholderScreen(
-                title = "Onboarding",
-                actions = listOf("Fertig" to { navController.navigate(History) { popUpTo<Onboarding> { inclusive = true } } }),
+            // Onboarding sets the onboardingComplete flag on finish, then we land on History
+            // (clearing onboarding from the back stack so "back" can't return to it).
+            OnboardingRoot(
+                onFinished = {
+                    navController.navigate(History) {
+                        popUpTo<Onboarding> { inclusive = true }
+                    }
+                },
             )
         }
     }
@@ -85,24 +78,5 @@ fun CheckinNavHost(
 private fun NavController.popToHistory() {
     if (!popBackStack<History>(inclusive = false)) {
         navigate(History) { popUpTo(graph.id) { inclusive = true } }
-    }
-}
-
-@Composable
-private fun PlaceholderScreen(
-    title: String,
-    actions: List<Pair<String, () -> Unit>>,
-) {
-    Column(
-        modifier = Modifier.fillMaxSize().padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        Text(text = title, style = MaterialTheme.typography.headlineSmall)
-        actions.forEach { (label, onClick) ->
-            Button(onClick = onClick, modifier = Modifier.padding(top = 16.dp)) {
-                Text(text = label)
-            }
-        }
     }
 }

@@ -78,6 +78,43 @@
     <string name="stat_hunger">Hunger</string>
     <string name="stat_tension">Spannung</string>
 
+    <!-- Settings -->
+    <string name="settings_title">Einstellungen</string>
+    <string name="settings_section_reminders">Erinnerungen</string>
+    <string name="settings_section_data">Daten</string>
+    <string name="settings_section_permissions">Berechtigungen</string>
+    <string name="settings_reminder_daily">Täglich</string>
+    <string name="settings_reminder_off">Aus</string>
+    <string name="settings_add_time">Zeit hinzufügen</string>
+    <string name="settings_export_title">Daten exportieren</string>
+    <string name="settings_export_subtitle">Alle Check-ins als CSV → Download-Ordner</string>
+    <string name="settings_export_unavailable">Export folgt in Kürze.</string>
+    <string name="settings_perm_notifications">Benachrichtigungen</string>
+    <string name="settings_perm_battery">Akku-Optimierung</string>
+    <string name="settings_perm_battery_ok">Ausgenommen – Erinnerungen kommen pünktlich</string>
+    <string name="settings_perm_battery_action">Für pünktliche Erinnerungen ausnehmen</string>
+    <string name="settings_badge_ok">Erlaubt</string>
+    <string name="settings_badge_action">Aktion nötig</string>
+    <string name="cd_settings_back">Zurück</string>
+    <string name="cd_delete_reminder">Erinnerung löschen</string>
+
+    <!-- Time picker -->
+    <string name="time_picker_title">Uhrzeit wählen</string>
+    <string name="time_picker_confirm">OK</string>
+    <string name="time_picker_cancel">Abbrechen</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_headline">Damit Erinnerungen ankommen</string>
+    <string name="onboarding_subline">Zwei kurze Freigaben – danach läuft alles automatisch und offline.</string>
+    <string name="onboarding_notifications_title">Benachrichtigungen</string>
+    <string name="onboarding_notifications_body">Wir erinnern dich zu deinen Check-in-Zeiten.</string>
+    <string name="onboarding_battery_title">Akku-Optimierung aus</string>
+    <string name="onboarding_battery_body">Sonst kommen Erinnerungen verspätet oder gar nicht.</string>
+    <string name="onboarding_allow">Erlauben</string>
+    <string name="onboarding_configure">Einstellen</string>
+    <string name="onboarding_done">Erledigt</string>
+    <string name="onboarding_start">Los geht\'s</string>
+
     <!-- Discard dialog -->
     <string name="discard_title">Check-in verwerfen?</string>
     <string name="discard_message">Du hast bereits etwas eingegeben. Wenn du jetzt gehst, wird dieser Check-in nicht gespeichert.</string>
